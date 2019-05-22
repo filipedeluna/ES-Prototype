@@ -2,6 +2,7 @@
   <div id="app">
     <Banner />
     <router-view/>
+    {{ this.$store.getters.isLogged }}
   </div>
 </template>
 
@@ -9,10 +10,11 @@
 import Banner from './components/Banner.vue';
 import './assets/style.css';
 
+
 export default {
   name: 'app',
   components: {
     Banner
-  }
+  },
 };
 </script>

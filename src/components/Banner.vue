@@ -26,7 +26,7 @@ export default {
 
     <b-collapse id="nav-collapse" is-nav>
       <b-navbar-nav>
-        <div id="banner-routes" v-for="route in Routes" v-bind:key="route">
+        <div id="banner-routes" v-for="route in Routes" v-bind:key="route.id">
           <b-nav-item 
             :href="`#${route.route}`"
             :disabled="isDisabled(route.route)"

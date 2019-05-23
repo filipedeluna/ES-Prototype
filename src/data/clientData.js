@@ -1,6 +1,7 @@
 // Client Info 
 export const ClientInfo = {
-  name: 'Joel Sousa',
+  firstName: 'Joel',
+  fullName: 'Joel Sousa',
   email: 'jsousa@gmail.com',
   password: '123456'
 }

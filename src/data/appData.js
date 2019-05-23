@@ -1,9 +1,4 @@
 export const Routes = {
-  Pay: {
-    route: '/pay',
-    name: 'Pay',
-    id: 1
-  },
   CreateTrip: {
     route: '/create/trip',
     name: 'Create Trip',

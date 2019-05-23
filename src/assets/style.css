@@ -3,3 +3,12 @@
   height: 50px;
   background-color: red;
 }
+
+/* Material Design */
+.material-icons.md-light { color: rgba(255, 255, 255, 1); }
+.material-icons.md-fix-24 { 
+  font-size: 24px;
+  line-height: 24px;
+  vertical-align: middle;
+}
+

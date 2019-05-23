@@ -17,8 +17,13 @@ Vue.use(BootstrapVue)
 Vue.use(Vuex)
 
 const routes = [
-  // { path: '/', component: App },
   { path: '/pay', component: Pay },
+  //{ path: '/cart', component: Cart },
+  //{ path: '/create/trip', component: CreateTrip },
+  //{ path: '/search/event', component: SearchEvent },
+  //{ path: '/search/property', component: SearchProperty },
+  //{ path: '/register/property', component: RegisterProperty },
+  //{ path: '/register/user', component: RegisterUser },
 ];
 
 const router = new VueRouter({

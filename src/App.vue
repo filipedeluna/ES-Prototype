@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <Banner />
+    <br>
     <router-view/>
     {{ this.$store.getters.isLogged }}
   </div>

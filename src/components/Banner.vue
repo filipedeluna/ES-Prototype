@@ -1,8 +1,6 @@
 <script>
 import { Routes } from '../data/appData';
 
-import { ClientInfo } from '../data/clientData';
-
 import 'material-design-icons/iconfont/material-icons.css';
 
 let formData =  {
@@ -14,7 +12,6 @@ export default {
   data() {
     return {
       Routes,
-      ClientInfo,
       formData
     }
   },
@@ -23,9 +20,10 @@ export default {
       return this.$route.path.trim() == `${route}`
     },
     verifyData(ok) {
-      let valid = 
-        formData.loginEmail == ClientInfo.email &&
-        formData.loginPassword == ClientInfo.password
+      let valid = this.$store.getters.credentialsValid({ 
+        email: formData.loginEmail, 
+        password: formData.loginPassword 
+        });
 
       if (valid) {
         this.$bvToast.toast('You are now logged in.', {
@@ -33,7 +31,7 @@ export default {
           variant: 'success',
           solid: true
         });
-        this.$store.commit('login');
+        this.$store.commit('login', { email: formData.loginEmail });
         ok();
       } else {
         this.$bvToast.toast('Invalid credentials.', {
@@ -80,7 +78,7 @@ export default {
       &nbsp;
       
       <b-nav-text v-if="this.$store.getters.isLogged">
-       {{ `Hello, ${ClientInfo.firstName}` }}
+       {{ `Hello, ${this.$store.getters.loggedClient.firstName}` }}
       </b-nav-text> 
       &nbsp;
       &nbsp;

@@ -108,13 +108,13 @@ const createToast = (bv, text, type) => {
 <div class="banner"> 
   <div id="banner-main">
     <b-navbar toggleable="lg" type="dark" variant="primary">
-      <b-navbar-brand href="/">Booking+</b-navbar-brand>
+      <b-navbar-brand  to="/searchproperty">Booking+</b-navbar-brand>
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav>
           <div id="banner-routes" v-for="route in Routes" v-bind:key="route.id">
             <router-link 
               :to="{ path: route.path }" 
-              v-if="route.name != 'Cart' && route.name != 'Show Properties'" 
+              v-if="route.banner" 
               tag="b-nav-item"
               :disabled="isDisabled(route.path)"
             >

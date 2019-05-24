@@ -1,6 +1,8 @@
 <template>
   <div class="searchproperty">
-    <p> Search Property </p>
+    <div class="mainBody">
+      <p> Search Property </p>
+    </div>
   </div>
 </template>
 
@@ -11,3 +13,9 @@ export default {
   }
 }
 </script>
+
+<style>
+.searchproperty {
+  margin-top: 14px;
+}
+</style>

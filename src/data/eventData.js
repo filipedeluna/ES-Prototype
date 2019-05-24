@@ -1,3 +1,5 @@
+const PICPATH = 'pictures/events/';
+
 export const Events = [
   {
     id: 1,
@@ -6,7 +8,7 @@ export const Events = [
     tickets: 424,
     price: 600,
     date: new Date(2019, 10, 5),
-    picture: 'pictures/events/tomorrowland.jpg',
+    picture: PICPATH + 'tomorrowland.jpg',
     site: 'https://www.tomorrowland.com'
   },
   {
@@ -16,7 +18,7 @@ export const Events = [
     tickets: 4223,
     price: 900,
     date: new Date(2019, 8, 16),
-    picture: 'pictures/events/coachella.jpg',
+    picture: PICPATH + 'coachella.jpg',
     site: 'https://live.coachella.com'
   },
   {
@@ -26,7 +28,7 @@ export const Events = [
     tickets: 30,
     price: 1500,
     date: new Date(2019, 5, 20),
-    picture: 'pictures/events/lollapalooza.jpg',
+    picture: PICPATH + 'lollapalooza.jpg',
     site: 'https://www.lollapalooza.com'
   },
   {
@@ -36,7 +38,7 @@ export const Events = [
     tickets: 870,
     price: 300,
     date: new Date(2019, 8, 25),
-    picture: 'pictures/events/burningman.jpg',
+    picture: PICPATH + 'burningman.jpg',
     site: 'https://burningman.org'
   },
   {
@@ -46,7 +48,7 @@ export const Events = [
     tickets: '-',
     price: '-',
     date: new Date(2019, 1, 18),
-    picture: 'pictures/events/carnaval.jpg',
+    picture: PICPATH + 'carnaval.jpg',
     site: 'http://www.camara.rj.gov.br'
   },
   {
@@ -56,7 +58,7 @@ export const Events = [
     tickets: 0,
     price: 760,
     date: new Date(2019, 4, 3),
-    picture: 'pictures/events/edc.jpg',
+    picture: PICPATH + 'edc.jpg',
     site: 'https://lasvegas.electricdaisycarnival.com'
   },
 ]

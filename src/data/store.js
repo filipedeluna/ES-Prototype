@@ -1,13 +1,15 @@
 import * as R from 'ramda/dist/ramda';
 
 import { DefaultUser } from '../data/clientData';
+import { Properties } from '../data/propertyData';
 
 // Main app state
 export let Store = {
   state: {
     userLoggedIn: false,
     loggedClient: {},
-    users: [ DefaultUser ]
+    users: [ DefaultUser ],
+    properties: Properties
   },
   mutations: { // sync
     // Session
@@ -50,7 +52,9 @@ export let Store = {
       return !R.isNil(user) && 
         payload.email == user.email && 
         payload.password == user.password;
-    }
+    },
+    getProperties: state =>
+      state.properties
   }
 }
 

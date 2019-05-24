@@ -1,3 +1,7 @@
+#app {
+  font-family: sans-serif;
+}
+
 #banner-main {
   width: 100%;
   height: 50px;
@@ -53,5 +57,84 @@
   padding-right: 90px;
 }
 
-.events {
+.property {
+  height: 170px;
+  background-color:#e6e6e6;
+  padding-left: 30px;
+  margin-bottom: 20px;
+}
+
+.propertypic {
+  width: 130px;
+  padding-top: 22px;
+  float: left;
+}
+
+.propertydata {
+  float: left;
+  padding-top: 15px;
+  margin-left: 20px;
+}
+
+.propertiestitle {
+  font-weight: 700;
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.propertytitle {
+  font-weight: 700;
+  font-size: 24px;
+}
+
+.propertybook {
+  padding-right: 80px;
+}
+
+.propertystar {
+  float: left;
+  font-size: 26px;
+  color: rgb(236, 201, 0);
+  text-shadow:
+   -1px -1px 0 #000,  
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+     1px 1px 0 #000;
+}
+
+.propertyscore {
+  margin-top: 30px;
+  margin-right: 40px;
+  height: 60px;;
+  width: 130px;
+}
+
+.propertyreviewnumber {
+  float: left;
+  margin: 3px;
+  font-family: sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.propertylist {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  max-height: 100px;
+}
+
+.propertylistitem {
+  width: 300px;
+  height: 25px;
+}
+
+.propertyPrice {
+  font-size: 42px;
+  font-weight: 700;
+  color: #007bff;
+  float: right;
+  width: 180px;
+  height: 170px;
+  line-height: 200px;
 }

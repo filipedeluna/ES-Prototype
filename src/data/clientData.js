@@ -2,13 +2,12 @@
 export const DefaultUser = {
     firstName: 'Joel',
     lastName: 'Sousa',
-    email: 'jsousa@gmail.com',
+    email: 'email',
     password: '123456',
     PaymentMethods: []
   }
 
 // Payment
-
 export const PaymentMethods = {
   VISA: {
     name: 'VISA',

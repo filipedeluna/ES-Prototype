@@ -62,17 +62,27 @@ export default {
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav>
           <div id="banner-routes" v-for="route in Routes" v-bind:key="route.id">
-            <b-nav-item 
-              :href="`#${route.route}`"
-              :disabled="isDisabled(route.route)"
+            <router-link 
+              :to="{ path: route.path }" 
+              v-if="route.name != 'Cart'" 
+              tag="b-nav-item"
+              :disabled="isDisabled(route.path)"
             >
-            {{ route.name }}
-            </b-nav-item>
+              {{ route.name }}
+            </router-link>
           </div>     
         </b-navbar-nav>     
       </b-collapse>
 
-      <b-button type="submit">Cart</b-button> 
+      <router-link 
+        to="/cart" 
+        v-if="this.$store.getters.isLogged" 
+        tag="b-button" 
+        type="submit"
+      >
+        Cart 
+      </router-link>
+
       &nbsp;
       &nbsp;
       &nbsp;
@@ -80,6 +90,7 @@ export default {
       <b-nav-text v-if="this.$store.getters.isLogged">
        {{ `Hello, ${this.$store.getters.loggedClient.firstName}` }}
       </b-nav-text> 
+
       &nbsp;
       &nbsp;
       &nbsp;
@@ -88,10 +99,30 @@ export default {
         Login
       </b-button> 
       
-      <b-button v-if="this.$store.getters.isLogged" @click="logout()">
-        Logout
-      </b-button> 
+      &nbsp;
+      &nbsp;
+      &nbsp;
 
+      <router-link 
+        to="/" 
+        v-if="!this.$store.getters.isLogged" 
+        tag="b-button"
+        @click.native="logout()"
+      >
+        Register
+      </router-link>
+
+      <router-link 
+        to="/" 
+        v-if="this.$store.getters.isLogged" 
+        tag="b-button"
+        @click.native="logout()"
+      >
+        Logout
+      </router-link>
+
+
+      <!-- LOGIN MODAL -->
       <b-modal id="login-modal" title="Login">
         <b-form-input v-model="formData.loginEmail" type="email" placeholder="Email"></b-form-input>
         <br>
@@ -103,6 +134,7 @@ export default {
         </template>
       </b-modal>
 
+      <!-- REGISTER MODAL -->
     </b-navbar>
   </div>
 </div>

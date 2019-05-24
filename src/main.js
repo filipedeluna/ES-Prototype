@@ -4,8 +4,9 @@ import VueRouter from 'vue-router';
 import BootstrapVue from 'bootstrap-vue';
 import Vuex from 'vuex';
 
-import Pay from './routes/Pay.vue';
+import Cart from './routes/Cart.vue';
 import { Store } from './data/store';
+import { Routes } from './data/appData';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
@@ -16,18 +17,8 @@ Vue.use(VueRouter);
 Vue.use(BootstrapVue)
 Vue.use(Vuex)
 
-const routes = [
-  { path: '/pay', component: Pay },
-  //{ path: '/cart', component: Cart },
-  //{ path: '/create/trip', component: CreateTrip },
-  //{ path: '/search/event', component: SearchEvent },
-  //{ path: '/search/property', component: SearchProperty },
-  //{ path: '/register/property', component: RegisterProperty },
-  //{ path: '/register/user', component: RegisterUser },
-];
-
 const router = new VueRouter({
-  routes
+  routes: Routes
 });
 
 const store = new Vuex.Store(Store);

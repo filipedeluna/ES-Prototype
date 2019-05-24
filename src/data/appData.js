@@ -1,27 +1,50 @@
-export const Routes = {
-  CreateTrip: {
-    route: '/create/trip',
+import Cart from '../routes/Cart';
+import CreateTrip from '../routes/CreateTrip';
+import SearchEvent from '../routes/SearchEvent';
+import SearchProperty from '../routes/SearchProperty';
+import RegisterProperty from '../routes/RegisterProperty';
+import RegisterUser from '../routes/RegisterUser';
+
+export const Routes = [
+  {
+    path: '/cart',
+    name: 'Cart',
+    component: Cart,
+    id: 1
+  }, 
+  {
+    path: '/createtrip',
     name: 'Create Trip',
+    component: CreateTrip,
     id: 2
   }, 
-  SearchEvent: {
-    route: '/search/event',
+  {
+    path: '/searchevent',
     name: 'Search Event',
+    component: SearchEvent,
     id: 3
   },
-  SearchProperty: {
-    route: '/search/property',
+  {
+    path: '/searchproperty',
     name: 'Search Property',
+    component: SearchProperty,
     id: 4
   },
-  RegisterProperty: {
-    route: '/register/property',
+  {
+    path: '/registerproperty',
     name: 'Register Property',
+    component: RegisterProperty,
     id: 5
-  },
-  RegisterUser: {
-    route: '/register/user',
-    name: 'Register User',
-    id: 6
   }
-}
+]
+
+export const DefaultCartItems = [
+  {
+    itemName: 'Airplane trip to Oslo',
+    itemQuantity: 3,
+    itemDate: new Date(),
+    itemDetails: '',
+    itemPrice: ''
+  }
+
+]

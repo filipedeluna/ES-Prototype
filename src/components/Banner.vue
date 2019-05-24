@@ -29,6 +29,10 @@ export default {
       return this.$route.path.trim() == `${route}`
     },
     verifyLogin(ok) {
+      let userExists = this.$store.getters.userExists({ 
+        email: loginForm.email, 
+        });
+
       let valid = this.$store.getters.credentialsValid({ 
         email: loginForm.email, 
         password: loginForm.password 
@@ -43,11 +47,18 @@ export default {
         this.$store.commit('login', { email: loginForm.email });
         ok();
       } else {
-        this.$bvToast.toast('Invalid credentials.', {
-            autoHideDelay: 3000,
-            variant: 'danger',
-            solid: true
-          });
+        if (!userExists)
+          this.$bvToast.toast('Email is not registered.', {
+              autoHideDelay: 3000,
+              variant: 'danger',
+              solid: true
+            });
+        else 
+          this.$bvToast.toast('Invalid password.', {
+              autoHideDelay: 3000,
+              variant: 'danger',
+              solid: true
+            });
       }
     },
     logout() {

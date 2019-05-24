@@ -3,7 +3,6 @@ import CreateTrip from '../routes/CreateTrip';
 import SearchEvent from '../routes/SearchEvent';
 import SearchProperty from '../routes/SearchProperty';
 import RegisterProperty from '../routes/RegisterProperty';
-import RegisterUser from '../routes/RegisterUser';
 
 export const Routes = [
   {

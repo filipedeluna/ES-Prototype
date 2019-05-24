@@ -4,7 +4,6 @@ import VueRouter from 'vue-router';
 import BootstrapVue from 'bootstrap-vue';
 import Vuex from 'vuex';
 
-import Cart from './routes/Cart.vue';
 import { Store } from './data/store';
 import { Routes } from './data/appData';
 

@@ -3,26 +3,35 @@ import { Routes } from '../data/appData';
 
 import 'material-design-icons/iconfont/material-icons.css';
 
-let formData =  {
-    loginEmail: '',
-    loginPassword: ''
+let loginForm =  {
+    email: '',
+    password: ''
+  }
+
+let registerForm =  {
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    password2: ''
   }
 
 export default {
   data() {
     return {
       Routes,
-      formData
+      loginForm,
+      registerForm
     }
   },
   methods: {
     isDisabled(route) {
       return this.$route.path.trim() == `${route}`
     },
-    verifyData(ok) {
+    verifyLogin(ok) {
       let valid = this.$store.getters.credentialsValid({ 
-        email: formData.loginEmail, 
-        password: formData.loginPassword 
+        email: loginForm.email, 
+        password: loginForm.password 
         });
 
       if (valid) {
@@ -31,7 +40,7 @@ export default {
           variant: 'success',
           solid: true
         });
-        this.$store.commit('login', { email: formData.loginEmail });
+        this.$store.commit('login', { email: loginForm.email });
         ok();
       } else {
         this.$bvToast.toast('Invalid credentials.', {
@@ -81,15 +90,7 @@ export default {
         type="submit"
       >
         Cart 
-      </router-link>
-
-      &nbsp;
-      &nbsp;
-      &nbsp;
-      
-      <b-nav-text v-if="this.$store.getters.isLogged">
-       {{ `Hello, ${this.$store.getters.loggedClient.firstName}` }}
-      </b-nav-text> 
+      </router-link>      
 
       &nbsp;
       &nbsp;
@@ -103,14 +104,17 @@ export default {
       &nbsp;
       &nbsp;
 
-      <router-link 
-        to="/" 
-        v-if="!this.$store.getters.isLogged" 
-        tag="b-button"
-        @click.native="logout()"
-      >
+      <b-button v-b-modal.register-modal v-if="!this.$store.getters.isLogged">
         Register
-      </router-link>
+      </b-button> 
+
+      <b-nav-text v-if="this.$store.getters.isLogged">
+       {{ `Hello, ${this.$store.getters.loggedClient.firstName}` }}
+      </b-nav-text> 
+
+      &nbsp;
+      &nbsp;
+      &nbsp;
 
       <router-link 
         to="/" 
@@ -120,23 +124,40 @@ export default {
       >
         Logout
       </router-link>
-
-
-      <!-- LOGIN MODAL -->
-      <b-modal id="login-modal" title="Login">
-        <b-form-input v-model="formData.loginEmail" type="email" placeholder="Email"></b-form-input>
-        <br>
-        <b-form-input v-model="formData.loginPassword" type="password" placeholder="Password"></b-form-input>
-        <template slot="modal-footer" slot-scope="{ ok }">
-          <b-button @click="verifyData(ok)">
-            Login
-          </b-button>
-        </template>
-      </b-modal>
-
-      <!-- REGISTER MODAL -->
     </b-navbar>
   </div>
+
+<!-- LOGIN MODAL -->
+<b-modal id="login-modal" title="Login">
+  <b-form-input v-model="loginForm.email" type="email" placeholder="Email"></b-form-input>
+  <br>
+  <b-form-input v-model="loginForm.password" type="password" placeholder="Password"></b-form-input>
+  <template slot="modal-footer" slot-scope="{ ok }">
+    <b-button @click="verifyLogin(ok)">
+      Login
+    </b-button>
+  </template>
+</b-modal>
+
+<!-- REGISTER MODAL -->
+<b-modal id="register-modal" title="Register Account">
+  <b-form-input v-model="registerForm.firstName" type="text" placeholder="First name"></b-form-input>
+  <br>
+  <b-form-input v-model="registerForm.lastName" type="text" placeholder="Last name"></b-form-input>
+  <br>
+  <b-form-input v-model="registerForm.email" type="email" placeholder="Email"></b-form-input>
+  <br>
+  <b-form-input v-model="registerForm.password" type="password" placeholder="Password"></b-form-input>
+  <br>
+  <b-form-input v-model="registerForm.password2" type="password2" placeholder="Confirm Password"></b-form-input>
+  
+  <template slot="modal-footer" slot-scope="{ ok }">
+    <b-button @click="verifyRegister(ok)">
+      Register
+    </b-button>
+  </template>
+</b-modal>
+
 </div>
 </template>
 

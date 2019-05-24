@@ -19,7 +19,7 @@
               </ul>
           </div>
           <div class="eventbook">
-            <b-button size="lg" >Book now!</b-button>
+            <b-button @click="verifyEvent(event)" size="lg" >Book now!</b-button>
           </div>
         </div>
          <b-pagination
@@ -44,6 +44,16 @@ export default {
       perPage: 3,
     }
   },
+  methods: {
+    verifyEvent(event) {
+      if (event.tickets <= 0)
+        createToast(this.$bvToast, 'Event is at full capacity.', 'danger');
+        
+      const now = new Date();
+      if (event.date <= now)
+        createToast(this.$bvToast, 'Event is not active anymore.', 'danger');
+    }
+  },
   computed: {
     events() {
       return Events.slice(
@@ -55,5 +65,14 @@ export default {
       return Events.length
     }
   }
+}
+
+// HELPER 
+const createToast = (bv, text, type) => {
+  bv.toast(text, {
+    autoHideDelay: 3000,
+    variant: type,
+    solid: true
+  });
 }
 </script>

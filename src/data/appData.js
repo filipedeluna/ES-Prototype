@@ -13,23 +13,23 @@ export const Routes = [
   }, 
   {
     path: '/createtrip',
-    name: 'Create Trip',
+    name: 'Create Itinerary',
     component: CreateTrip,
     id: 2
   }, 
   {
     path: '/searchevent',
-    name: 'Search Event',
+    name: 'Search Events',
     component: SearchEvent,
     id: 3
   },
   {
     path: '/searchproperty',
-    name: 'Search Property',
+    name: 'Search Accomodation',
     component: SearchProperty,
     id: 4
   },
-  {
+  { // Tem que estar logged
     path: '/registerproperty',
     name: 'Register Property',
     component: RegisterProperty,

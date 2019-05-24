@@ -3,6 +3,7 @@ import CreateTrip from '../routes/CreateTrip';
 import SearchEvent from '../routes/SearchEvent';
 import SearchProperty from '../routes/SearchProperty';
 import RegisterProperty from '../routes/RegisterProperty';
+import ShowProperties from '../routes/ShowProperties';
 
 export const Routes = [
   {
@@ -29,11 +30,17 @@ export const Routes = [
     component: SearchProperty,
     id: 4
   },
-  { // Tem que estar logged
+  { // Se nao estiver logged, pede para registar
     path: '/registerproperty',
     name: 'Register Property',
     component: RegisterProperty,
     id: 5
+  },
+  { // Se nao estiver logged, pede para registar
+    path: '/showProperties/:location',
+    name: 'Show Properties',
+    component: ShowProperties,
+    id: 6
   }
 ]
 

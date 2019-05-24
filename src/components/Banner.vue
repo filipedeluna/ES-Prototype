@@ -114,7 +114,7 @@ const createToast = (bv, text, type) => {
           <div id="banner-routes" v-for="route in Routes" v-bind:key="route.id">
             <router-link 
               :to="{ path: route.path }" 
-              v-if="route.name != 'Cart'" 
+              v-if="route.name != 'Cart' && route.name != 'Show Properties'" 
               tag="b-nav-item"
               :disabled="isDisabled(route.path)"
             >

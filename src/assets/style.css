@@ -12,3 +12,46 @@
   vertical-align: middle;
 }
 
+.mainBody {
+  min-height: 92vh;
+  background-color:#f7f7f7;
+  margin-top: 14px;
+  padding-top: 30px;
+  padding-left: 30px;
+  padding-right: 30px;
+  margin-left: 15%;
+  margin-right: 15%;
+}
+
+.event {
+  height: 240px;
+  background-color:#e6e6e6;
+  padding-left: 30px;
+  margin-bottom: 20px;
+}
+
+.eventpic {
+  width: 350px;
+  padding-top: 22px;
+  float: left;
+}
+
+.eventdata {
+  float: left;
+  padding-top: 20px;
+  margin-left: 20px;
+}
+
+.eventtitle {
+  font-weight: 700;
+  font-size: 40px;
+}
+
+.eventbook {
+  float: right;
+  padding-top: 150px;
+  padding-right: 90px;
+}
+
+.events {
+}

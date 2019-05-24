@@ -169,7 +169,7 @@ const createToast = (bv, text, type) => {
   </div>
 
 <!-- LOGIN MODAL -->
-<b-modal id="login-modal" title="Login">
+<b-modal id="login-modal" title="Login" centered>
   <b-form-input v-model="loginForm.email" type="email" placeholder="Email"></b-form-input>
   <br>
   <b-form-input v-model="loginForm.password" type="password" placeholder="Password"></b-form-input>
@@ -181,7 +181,7 @@ const createToast = (bv, text, type) => {
 </b-modal>
 
 <!-- REGISTER MODAL -->
-<b-modal id="register-modal" title="Register Account">
+<b-modal id="register-modal" title="Register Account" centered>
   <b-form-input v-model="registerForm.firstName" type="text" placeholder="First name"></b-form-input>
   <br>
   <b-form-input v-model="registerForm.lastName" type="text" placeholder="Last name"></b-form-input>

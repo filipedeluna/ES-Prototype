@@ -45,5 +45,4 @@ export const DefaultCartItems = [
     itemDetails: '',
     itemPrice: ''
   }
-
 ]

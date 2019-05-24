@@ -1,21 +1,266 @@
 <template>
   <div class="searchproperty">
     <div class="mainBody">
-      <p> Search Property </p>
+      <div class="searchpropertytitle"> 
+        Pick where you wish to go.
+      </div>
+      <br>
+      <div class="searchPropertyForm">
+        <b-form inline>
+          <b-input size="lg" v-model="formData.destination" class="searchPropertyinput" placeholder="Destination"/>
+          <b-input size="lg" v-model="formData.date" type="date" class="searchPropertyinput"/>
+          <b-form-select         
+            class="searchPropertyinput"
+            placeholder="Username"
+            :options="[1, 2, 3, 4, 5]"
+            required
+            size="lg"
+            v-model="formData.adults"
+            >
+              <option slot="first" :value="null">Adults</option>
+            </b-form-select>
+            <b-form-select         
+              class="searchPropertyinput"
+              placeholder="Username"
+              :options="[0, 1, 2, 3, 4, 5]"
+              :value="null"
+              required
+              v-model="formData.children"
+              size="lg" 
+            >
+              <option slot="first" :value="null">Children</option>
+            </b-form-select>
+          <b-button size="lg" variant="primary" @click="verifyData()">Search Acommodations</b-button>
+        </b-form>
+      </div>
+      <div class="searchpropertytitle2"> 
+        Check out some of the hottest destinations:
+      </div>
+      <div class="searchpropertyrecommendations">
+        <b-card
+          :img-src="property.picture"
+          img-top
+          tag="article"
+          style="max-width: 15rem;"
+          class="searchpropertyrecommendationscard"
+          v-for="property in properties"
+          v-bind:key="property.id"
+        >
+          <b-card-text class="searchpropertyrecommendationscardtext" >
+            {{ randomCities[property.id] }}
+          </b-card-text>
+        </b-card>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import moment from 'moment';
+
+const cities = [
+  'Hong Kong',
+  'Bangkok',
+  'London',
+  'Singapore',
+  'Macau',
+  'Dubai',
+  'Paris',
+  'New York',
+  'Shenzhen',
+  'Kuala Lumpur',
+  'Delhi',
+  'Tokyo',
+  'Rome',
+  'Mumbai',
+  'Mecca',
+  'Istanbul',	 
+  'Prague',
+  'Miami',
+  'Seoul',
+  'Barcelona ',
+  'Pattaya',
+  'Shanghai',
+  'Milan',
+  'Cancún',
+  'Agra',
+  'Las Vegas', 
+  'Amsterdam',
+  'Antalya',
+  'Denpasar',
+  'Osaka',
+  'Los Angeles',
+  'Vienna',
+  'Berlin',
+  'Madrid',
+  'Johor Bahru ',
+  'Johannesburg',
+  'Riyadh',
+  'Ho Chi Minh',
+  'Venice',
+  'Orlando',
+  'Chennai',
+  'Jaipur',
+  'Athens',
+  'Dublin',
+  'Florence',
+  'Moscow',
+  'Toronto',
+  'Hanoi',
+  'Beijing',
+  'Ha Long',
+  'Sydney',
+  'Budapest',
+  'Punta Cana',
+  'San Francisco',
+  'Jakarta',
+  'Dammam',
+  'Lisbon',
+  'Zhuhai',
+  'Heraklion',
+  'Penang Island',
+  'Cairo',
+  'Copenhagen',
+  'Kyoto',
+  'Phnom Penh',
+  'Munich',
+  'Doha',
+  'Chiang Mai',
+  'Edirne',
+  'Jerusalem'
+];
+
+const formData = {
+    destination: null,
+    date: null,
+    adults: null,
+    children: null
+  };
+
 export default {
   name: 'SearchProperty',
-  props: {
+  data() {
+    return {
+      cities,
+      formData
+    } 
+  },
+  methods: {
+    verifyData() {
+      if (formData.destination == null || 
+          formData.destination.length < 3 || 
+          formData.destination.length > 10) {
+        createToast(this.$bvToast, 'Invalid destination.', 'danger');
+        return;
+      }
+
+      const now = moment();
+      
+      let fixedDate;
+      if (formData.date == null) {
+        createToast(this.$bvToast, 'Invalid date.', 'danger');
+        return;
+      }
+
+      fixedDate = moment(formData.date);
+
+      if (fixedDate.isBefore(now)) {
+        createToast(this.$bvToast, 'Invalid date.', 'danger');
+        return;
+      }
+
+      if (formData.adults == null || formData.adults > 5 || formData.adults < 1) {
+        createToast(this.$bvToast, 'Invalid number of adullts.', 'danger');
+        return;
+      }
+
+      if (formData.children == null || formData.children > 5 || formData.children < 0) {
+        createToast(this.$bvToast, 'Invalid number of children.', 'danger');
+        return;
+      }
+      
+      this.$store.commit('propertySearch', { 
+        date: fixedDate,
+        destination: formData.destination,
+        children: formData.children,
+        adults: formData.adults
+        });
+    }
+  },
+  computed: {
+    properties() {
+      return this.$store.getters.getProperties;
+    },
+    randomCities() {
+      let pickedCities = [];
+      let blacklisted = [];
+
+      for (let i = 0; i < 25; i++) {
+        let random = Math.floor(Math.random() * cities.length);
+        while (blacklisted.includes(random)) {
+          random = Math.floor(Math.random() * cities.length);
+        }
+
+        blacklisted.push(random);
+        pickedCities.push(cities[random])
+      }
+
+      return pickedCities;
+    },
   }
+}
+
+// HELPER 
+const createToast = (bv, text, type) => {
+  bv.toast(text, {
+    autoHideDelay: 3000,
+    variant: type,
+    solid: true
+  });
 }
 </script>
 
 <style>
 .searchproperty {
   margin-top: 14px;
+}
+
+.searchPropertyForm {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.searchPropertyinput {
+}
+
+.searchpropertytitle {
+  font-size: 30px;
+  padding-left: 60px;
+}
+
+.searchpropertytitle2 {
+  font-size: 30px;
+  padding-left: 60px;
+  margin-top: 50px;
+}
+
+.searchpropertyrecommendations {
+  margin-top: 50px;
+  margin-left: 50px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.searchpropertyrecommendationscard {
+  margin-right: 40px;
+  margin-bottom: 40px;
+}
+
+.searchpropertyrecommendationscardtext {
+  text-align: center;
+  font-size: 26px;
+  font-weight: 500;
 }
 </style>

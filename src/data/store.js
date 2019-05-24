@@ -9,7 +9,8 @@ export let Store = {
     userLoggedIn: false,
     loggedClient: {},
     users: [ DefaultUser ],
-    properties: Properties
+    properties: Properties,
+    lastPropertySearch: null
   },
   mutations: { // sync
     // Session
@@ -33,6 +34,9 @@ export let Store = {
       }
       console.log(newUser);
       state.users.push(newUser);
+    },
+    propertySearch: (state, payload) => {
+      state.lastPropertySearch = payload;
     }
 
   },
@@ -43,6 +47,10 @@ export let Store = {
     // Session
     isLogged: state => 
       state.userLoggedIn,
+    lastPropertySearched: state => 
+      state.lastPropertySearch,
+    wasPropertySearched: state => 
+      !R.isNil(state.lastPropertySearch),
     loggedClient: state => 
       state.loggedClient,
     userExists: state => payload => 
@@ -60,4 +68,3 @@ export let Store = {
 
 const getUserByEmail = (email, state) =>
   R.find(R.propEq('email', email), state.users);
-

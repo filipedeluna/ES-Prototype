@@ -1,6 +1,9 @@
 <template>
   <div class="searchevent">
     <div class="mainBody">
+      <div class="searcheventstitle"> 
+        Pick from hundreds of events.
+      </div>
       <div class="events">
         <div class="event" v-for="event in events" v-bind:key="event.id">
           <div class="eventpic">
@@ -76,3 +79,11 @@ const createToast = (bv, text, type) => {
   });
 }
 </script>
+
+<style>
+.searcheventstitle {
+  font-size: 30px;
+  padding-left: 60px;
+  margin-bottom: 20px;
+}
+</style>

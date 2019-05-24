@@ -26,50 +26,80 @@ export default {
   },
   methods: {
     isDisabled(route) {
-      return this.$route.path.trim() == `${route}`
+      return this.$route.path.trim() == `${route}`;
     },
     verifyLogin(ok) {
       let userExists = this.$store.getters.userExists({ 
-        email: loginForm.email, 
+        email: loginForm.email
         });
 
       let valid = this.$store.getters.credentialsValid({ 
-        email: loginForm.email, 
-        password: loginForm.password 
+        email: loginForm.email,
+        password: loginForm.password
         });
 
       if (valid) {
-        this.$bvToast.toast('You are now logged in.', {
-          autoHideDelay: 3000,
-          variant: 'success',
-          solid: true
-        });
         this.$store.commit('login', { email: loginForm.email });
+        createToast(this.$bvToast, 'You are now logged in.', 'success');
         ok();
       } else {
         if (!userExists)
-          this.$bvToast.toast('Email is not registered.', {
-              autoHideDelay: 3000,
-              variant: 'danger',
-              solid: true
-            });
+          createToast(this.$bvToast, 'Email is not registered.', 'danger');
         else 
-          this.$bvToast.toast('Invalid password.', {
-              autoHideDelay: 3000,
-              variant: 'danger',
-              solid: true
-            });
+          createToast(this.$bvToast, 'Invalid password.', 'danger');
       }
+    },
+    verifyRegister(ok) {
+      if (registerForm.firstName.length < 2 || registerForm.firstName.length > 15) {
+        createToast(this.$bvToast, 'Invalid first name.', 'danger');
+        return;
+      }
+
+      if (registerForm.lastName.length < 2 || registerForm.lastName.length > 15) {
+        createToast(this.$bvToast, 'Invalid last name.', 'danger');
+        return;
+      }
+
+      if (registerForm.email.length < 6 || registerForm.email.length > 15) {
+        createToast(this.$bvToast, 'Invalid email.', 'danger');
+        return;
+      }
+
+
+      if (registerForm.password.length < 3 || registerForm.password.length > 12) {
+        createToast(this.$bvToast, 'Invalid password.', 'danger');
+        return;
+      }
+
+      if (registerForm.password !== registerForm.password2) {
+        createToast(this.$bvToast, 'Passwords don\'t match.', 'danger');
+        return;
+      }
+      
+      if (this.$store.getters.userExists({ email: registerForm.email })) {
+        createToast(this.$bvToast, 'User already registered.', 'danger');
+        return;
+      }
+      
+      
+      createToast(this.$bvToast, 'You are now logged in.', 'success');
+      this.$store.commit('registerUser', registerForm);
+      ok();
     },
     logout() {
       this.$store.commit('logout');
-      this.$bvToast.toast('You are now logged out.', {
-          autoHideDelay: 3000,
-          variant: 'success',
-          solid: true
-        });
+      createToast(this.$bvToast, 'You are now logged out.', 'success');
     }
   }
+}
+
+// HELPER 
+const createToast = (bv, text, type) => {
+  bv.toast(text, {
+    autoHideDelay: 3000,
+    variant: type,
+    solid: true
+  });
 }
 
 </script>
@@ -160,8 +190,8 @@ export default {
   <br>
   <b-form-input v-model="registerForm.password" type="password" placeholder="Password"></b-form-input>
   <br>
-  <b-form-input v-model="registerForm.password2" type="password2" placeholder="Confirm Password"></b-form-input>
-  
+  <b-form-input v-model="registerForm.password2" type="password" placeholder="Confirm Password"></b-form-input>
+  <br>
   <template slot="modal-footer" slot-scope="{ ok }">
     <b-button @click="verifyRegister(ok)">
       Register
@@ -172,5 +202,8 @@ export default {
 </div>
 </template>
 
+<style>
+
+</style>
 
 

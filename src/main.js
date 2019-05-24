@@ -13,8 +13,8 @@ import 'bootstrap-vue/dist/bootstrap-vue.css';
 Vue.config.productionTip = false;
 
 Vue.use(VueRouter);
-Vue.use(BootstrapVue)
-Vue.use(Vuex)
+Vue.use(BootstrapVue);
+Vue.use(Vuex);
 
 const router = new VueRouter({
   routes: Routes

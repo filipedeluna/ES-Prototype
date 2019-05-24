@@ -21,7 +21,15 @@ export let Store = {
       state.userLoggedIn = false;
       state.loggedClient = {}
     },
-    registerUser: (state, newUser) => {
+    registerUser: (state, payload) => {
+      const newUser = {
+        firstName: payload.firstName,
+        lastName: payload.lastName,
+        email: payload.email,
+        password: payload.password,
+        paymentMethods: []
+      }
+      console.log(newUser);
       state.users.push(newUser);
     }
 

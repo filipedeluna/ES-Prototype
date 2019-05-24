@@ -4,7 +4,7 @@ export const DefaultUser = {
     lastName: 'Sousa',
     email: 'email',
     password: '123456',
-    PaymentMethods: []
+    paymentMethods: []
   }
 
 // Payment

@@ -62,9 +62,30 @@ export let Store = {
         payload.password == user.password;
     },
     getProperties: state =>
-      state.properties
+      state.properties,
+    generateProperties: state => {
+      let generatedProperties = state.properties;
+    
+      for (let i = 0; i < generatedProperties.length; i++) {
+        generatedProperties[i] = {
+          ...generatedProperties[i],
+          wifi: randomYesNo(),
+          pets: randomYesNo(),
+          smokers: randomYesNo(),
+          cleaning: randomYesNo(),
+          guests: randomYesNo(),
+          garage: randomYesNo(),
+          reviews: Math.floor((Math.random() * 950 )) + 50,
+          distance: Math.floor((Math.random() * 25 )) + 1 
+        }
+      }
+      return generatedProperties;
+    }
   }
 }
 
 const getUserByEmail = (email, state) =>
   R.find(R.propEq('email', email), state.users);
+
+const randomYesNo = () =>
+  Math.floor((Math.random() * 10 )) >= 4;

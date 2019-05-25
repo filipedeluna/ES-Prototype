@@ -53,7 +53,7 @@ export const Routes = [
     redirect: '/searchproperty',
     component: ShowProperties,
     banner: false,
-    id: 6
+    id: 7
   },
 ]
 

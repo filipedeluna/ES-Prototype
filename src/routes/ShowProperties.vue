@@ -2,7 +2,7 @@
   <div class="showproperties">
     <div class="mainBody">
       <div class="propertiestitle">
-        Showing {{ totalRows }} accomodations near {{ location }}.
+        Showing {{ totalRows }} accomodations near {{ searchData.destination }}.
       </div>
       <div class="properties">
         <div class="property" v-for="property in properties" v-bind:key="property.id">
@@ -11,10 +11,10 @@
           </div>
           <div class="propertydata">
             <div class="propertytitle">
-              {{ property.name }} in {{ location }}
+              {{ property.name }} in {{ searchData.destination }}
             </div>
               <ul class="propertylist">
-                <li class="propertylistitem">{{ Math.floor((Math.random() * 10 )) + 1 }} km from {{ location }} center!</li>
+                <li class="propertylistitem">{{ Math.floor((Math.random() * 10 )) + 1 }} km from {{ searchData.destination }} center.</li>
                 <li class="propertylistitem">Rooms: {{ property.rooms }}</li>
                 <li class="propertylistitem">Wi-fi Access: {{ randomYesNo() }}</li>
                 <li class="propertylistitem">Pets Allowed: {{ randomYesNo() }}</li>
@@ -38,7 +38,7 @@
               </div>
             </div>
             <div class="propertybook">
-              <b-button @click="verifyEvent(property)" size="lg" >Book now!</b-button>
+              <b-button @click="verifyProperty(property)" size="lg" >Book now!</b-button>
             </div>
           </div>
            <div class="propertyPrice">
@@ -59,14 +59,19 @@
 <script>
 export default {
   name: 'ShowProperties',
+  beforeMount(){
+    if (!this.$store.getters.wasPropertySearched)
+      this.$router.push('/');
+  },
   data() {
     return {
       currentPage: 1,
       perPage: 5,
+      searchData: this.$store.getters.lastPropertySearched  
     }
   },
   methods: {
-    verifyEvent(property) {
+    verifyProperty(property) {
      
     },
     randomYesNo() {

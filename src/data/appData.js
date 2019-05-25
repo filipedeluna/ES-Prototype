@@ -42,7 +42,7 @@ export const Routes = [
     id: 5
   },
   { // Se nao estiver logged, pede para registar
-    path: '/showProperties/:location',
+    path: '/showProperties',
     name: 'Show Properties',
     component: ShowProperties,
     banner: false,

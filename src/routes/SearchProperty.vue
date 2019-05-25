@@ -8,7 +8,8 @@
       <div class="searchPropertyForm">
         <b-form inline>
           <b-input size="lg" v-model="formData.destination" class="searchPropertyinput" placeholder="Destination"/>
-          <b-input size="lg" v-model="formData.date" type="date" class="searchPropertyinput"/>
+          <b-input size="lg" v-model="formData.checkIn" type="date" class="searchPropertyinput"/>
+          <b-input size="lg" v-model="formData.checkOut" type="date" class="searchPropertyinput"/>
           <b-form-select         
             class="searchPropertyinput"
             placeholder="Username"
@@ -132,7 +133,8 @@ const cities = [
 
 const formData = {
     destination: null,
-    date: null,
+    checkIn: null,
+    checkOut: null,
     adults: null,
     children: null
   };
@@ -153,19 +155,34 @@ export default {
         createToast(this.$bvToast, 'Invalid destination.', 'danger');
         return;
       }
-
-      const now = moment();
       
-      let fixedDate;
-      if (formData.date == null) {
-        createToast(this.$bvToast, 'Invalid date.', 'danger');
+      if (formData.checkIn == null) {
+        createToast(this.$bvToast, 'Invalid checkin date.', 'danger');
         return;
       }
 
-      fixedDate = moment(formData.date);
+      if (formData.checkOut == null) {
+        createToast(this.$bvToast, 'Invalid checkout date.', 'danger');
+        return;
+      }
 
-      if (fixedDate.isBefore(now)) {
-        createToast(this.$bvToast, 'Invalid date.', 'danger');
+      const now = moment();
+      const fixedCheckInDate = moment(formData.checkIn);
+      const fixedCheckOutDate = moment(formData.checkOut);
+
+      
+      if (fixedCheckInDate.isBefore(now)) {
+        createToast(this.$bvToast, 'Invalid checkin date.', 'danger');
+        return;
+      }
+
+      if (fixedCheckInDate.isBefore(now)) {
+        createToast(this.$bvToast, 'Invalid checkout date.', 'danger');
+        return;
+      }
+
+      if (fixedCheckOutDate.isBefore(fixedCheckInDate)) {
+        createToast(this.$bvToast, 'Invalid checkin and checkout interval.', 'danger');
         return;
       }
 
@@ -180,11 +197,14 @@ export default {
       }
       
       this.$store.commit('propertySearch', { 
-        date: fixedDate,
+        checkin: fixedCheckInDate,
+        checkOut: fixedCheckOutDate,
         destination: formData.destination,
         children: formData.children,
         adults: formData.adults
         });
+
+        this.$router.push('/showProperties') ;
     }
   },
   computed: {

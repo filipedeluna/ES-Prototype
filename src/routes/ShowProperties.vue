@@ -177,10 +177,12 @@ const createToast = (bv, text, type) => {
 
 <style>
 .propertyfilters2 {
-
+  margin-right: 10px;
+  margin-left: 10px;
 }
 
 .propertyfilters {
   display: flex;
+  margin-bottom: 10px;
 }
 </style>

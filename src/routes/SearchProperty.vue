@@ -204,7 +204,7 @@ export default {
         adults: formData.adults
         });
 
-        this.$router.push('/showProperties') ;
+        this.$router.push('/showProperties');
     }
   },
   computed: {

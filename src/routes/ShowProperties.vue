@@ -71,6 +71,63 @@
         />
       </div>
     </div>
+    <!-- BOOK MODAL -->
+    <b-modal id="book-modal" title="Book Accomodation" centered>
+
+      <span class="bookModalTitle"> {{chosenProperty.name }} in {{ /* searchData.destination */ }}.</span>
+
+      <div class="modalpropertypic">
+        <b-img :src="chosenProperty.picture" fluid rounded></b-img>
+      </div>
+
+      <div class="bookModalPropertylist">
+        <span class="bookModalDetails">Accomodation details:</span>
+        <ul>
+          <li class="bookModalPropertylistItem">{{ chosenProperty.distance }} km from {{ /* searchData.destination */ }} center.</li>
+          <li class="bookModalPropertylistItem">{{ chosenProperty.rooms }} rooms.</li>
+          <li class="bookModalPropertylistItem" v-if="chosenProperty.wifi">Wi-fi access.</li>
+          <li class="bookModalPropertylistItem" v-if="chosenProperty.pets">Pets allowed.</li>
+          <li class="bookModalPropertylistItem" v-if="chosenProperty.smokers">Smokers allowed.</li>
+          <li class="bookModalPropertylistItem" v-if="chosenProperty.cleaning">Cleaning included.</li>
+          <li class="bookModalPropertylistItem" v-if="chosenProperty.guests">Guests allowed.</li>
+          <li class="bookModalPropertylistItem" v-if="chosenProperty.garage">Garage.</li>
+        </ul>
+      </div>
+
+      <div class="bookModalOrderlist">
+
+        <div class="material-icons propertyscore">
+          <div  v-for="index in chosenProperty.score" v-bind:key="index+'c'">
+            <i class="material-icons propertystar">star</i>
+          </div>
+          <div  v-for="index in 5 - chosenProperty.score" v-bind:key="index+'d'">
+            <i class="material-icons propertystar">star_border</i>
+          </div>
+          <div class="propertyreviewnumber">
+            Based on {{ chosenProperty.reviews }} reviews.
+          </div>
+        </div>
+
+        <span class="bookModalDetails">Order details:</span>
+        <ul>
+          <li class="bookModalOrderlistItem">{{ chosenProperty.distance }} km from {{ /* searchData.destination */ }} center.</li>
+          <li class="bookModalOrderlistItem">{{ chosenProperty.rooms }} rooms.</li>
+          <li class="bookModalOrderlistItem" v-if="chosenProperty.wifi">Wi-fi access.</li>
+          <li class="bookModalOrderlistItem" v-if="chosenProperty.pets">Pets allowed.</li>
+          <li class="bookModalOrderlistItem" v-if="chosenProperty.smokers">Smokers allowed.</li>
+          <li class="bookModalOrderlistItem" v-if="chosenProperty.cleaning">Cleaning included.</li>
+          <li class="bookModalOrderlistItem" v-if="chosenProperty.guests">Guests allowed.</li>
+          <li class="bookModalOrderlistItem" v-if="chosenProperty.garage">Garage.</li>
+        </ul>
+      </div>
+
+
+      <template slot="modal-footer" slot-scope="{ ok }">
+        <b-button @click="AddPropertyToCart(ok)">
+          Confirm.
+        </b-button>
+      </template>
+    </b-modal>
   </div>
 </template>
 
@@ -101,18 +158,28 @@ export default {
       searchData: this.$store.getters.lastPropertySearched,
       properties: this.$store.getters.generateProperties,
       filteredProperties: this.$store.getters.generateProperties,
-      filters
+      filters,
+      chosenProperty: {
+        score: 3
+      }
     }
   },
   methods: {
     verifyProperty(property) {
+      
+      this.chosenProperty = property;
+      this.$bvModal.show('book-modal');
       if (!this.$store.getters.isLogged) {
         createToast(this.$bvToast, 'Please login to book an accomodation.', 'danger');
         return;
       }
+      
     },
     getYesOrNo(val) {
       return val ? 'Yes' : 'No';
+    },
+    AddPropertyToCart(ok) {
+      ok();
     }
   },
   computed: {
@@ -185,4 +252,41 @@ const createToast = (bv, text, type) => {
   display: flex;
   margin-bottom: 10px;
 }
+
+.modalpropertypic {
+  width: 250px;
+  float: left;
+}
+
+.bookModalPropertylist {
+  float: left;
+  margin-left: 10px;
+}
+
+#book-modal .modal-dialog {
+  max-width: 600px; 
+}
+
+.bookModalDetails {
+  float: left;
+  font-size: 26px;
+  width: 100%;
+}
+
+.bookModalTitle {
+  float: left;
+  font-size: 26px;
+  width: 100%;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.bookModalOrderlist {
+  float: left;
+  width: 100%;
+}
+
+.bookModalOrderlistItem {
+}
+
 </style>

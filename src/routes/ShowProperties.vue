@@ -125,7 +125,12 @@
       </div>
 
       <template slot="modal-footer" slot-scope="{ ok }">
-        <b-button size="lg" @click="verifyProperty(ok, { chosenProperty, searchData })">
+        <b-button size="lg" @click="verifyProperty(ok, { 
+          ...chosenProperty, 
+          ...searchData,
+          fixedName: `${chosenProperty.name} in ${searchData.destination}`,
+          totalPrice: calculateTotalPrice(searchData.adults, searchData.children, chosenProperty.price, searchData.checkOut.diff(searchData.checkin, 'days') + 1) 
+        })">
           Add to cart
         </b-button>
       </template>

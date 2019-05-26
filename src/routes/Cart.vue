@@ -4,41 +4,63 @@
       <div class="cartBodyTitle"> 
         Shopping cart
       </div>
+
       <div class="cartItems">
         <template>
-          <div>
-            <b-table striped outlined bordered tdClass="danger" :items="events">
-              <th> hitas</th>
+            <b-table striped hover :items="cartItems" :fields="cartItemFields">
+              <template slot="remove" slot-scope="row">
+                <b-button @click="removeCartItem(row.item.remove)" size="sm" >Remove</b-button>
+             </template> 
+            </b-table>
+        </template>
+      </div>
+
+      <div class="cartDetails">
+        <template>
+          <div class="cartDetails2">
+            <b-table striped hover tdClass="danger" :items="cartDetails">
             </b-table>
           </div>
         </template>
-        <div class="cartItem" v-for="event in events" v-bind:key="event.id">
-          <div class="cartItemData">
-            <div class="cartItemTitle">
-              {{ 1 }}
-            </div>
-          </div>
-        </div>
-        <span class="cartTotal">TOTAL: 8000 €</span>
+      </div>
+      <br>
+      <div class="cartPay">
+        <b-form inline>
+          <b-input size="lg" v-model="discountCode" style="float: right; margin-top: 20px;" placeholder="Discount Code"/>
+          <b-button size="lg" variant="primary" @click="validateDiscount()" style="float: right; margin-top: 20px;">Validate</b-button>
+        </b-form>
         <br>
-        <div class="cartPay">
-          <b-button @click="verifyEvent(event)" size="lg" >Confirm and pay.</b-button>
-        </div>
+        <b-button style="float: right;" @click="3" size="lg" >Confirm and pay</b-button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { Events } from '../data/eventData';
+import moment from 'moment';
+import * as R from 'ramda';
+
+const cartItemFields = [
+  { key: 'name', label: 'Accomodation' },
+  { key: 'adults', label: 'Nr. of adults', class: 'text-center' },
+  { key: 'children', label: 'Nr. of children', class: 'text-center' },
+  { key: 'checkIn', label: 'Check-in date', class: 'text-center' },
+  { key: 'checkOut', label: 'Check-out date', class: 'text-center' },
+  { key: 'days', label: 'Nr. of days', class: 'text-center' },
+  { key: 'pricePerNight', label: 'Price per night', class: 'text-center' },
+  { key: 'totalPrice', label: 'Total price', class: 'text-center' },
+  { key: 'remove', label: 'Remove from cart', class: 'text-center' }
+];
 
 export default {
   name: 'Cart',
   data() {
     return {
-      Events,
       currentPage: 1,
       perPage: 3,
+      discount: 0,
+      discountCode: null,
+      cartItemFields
     }
   },
   methods: {
@@ -49,19 +71,73 @@ export default {
       const now = new Date();
       if (event.date <= now)
         createToast(this.$bvToast, 'Event is not active anymore.', 'danger');
+    },
+    removeCartItem(cartId) {
+      this.$store.commit('removeFromCart', cartId);
 
-      
+      createToast(this.$bvToast, 'Item removed from cart..', 'success');
+    },
+    validateDiscount() {
+      if (this.discountCode != null) {
+        switch(this.discountCode) {
+          case 'BOOKINGPLUS20': 
+            this.discount = 20;
+            createToast(this.$bvToast, 'Discount code validated.', 'danger');
+            return;
+          case 'BOOKINGPLUS40': 
+            this.discount = 40;
+            createToast(this.$bvToast, 'Discount code validated.', 'danger');
+          return;
+          case 'BOOKINGPLUS60': 
+            this.discount = 60;
+            createToast(this.$bvToast, 'Discount code validated.', 'danger');
+          return;
+        }
+      }
+      createToast(this.$bvToast, 'Invalid discount code.', 'danger');
     }
   },
   computed: {
-    events() {
-      return Events.slice(
-        (this.currentPage - 1) * this.perPage,
-        this.currentPage * this.perPage
-      )
+    cartItems() {
+      let cart = this.$store.getters.getCart;
+      let cartFiltered = [];
+
+      for (let i = 0; i < cart.length; i++) {
+        cartFiltered.push({
+          name: cart[i].fixedName,
+          adults: cart[i].adults,
+          children: cart[i].children,
+          checkIn: cart[i].checkin.format('L'),
+          checkOut: cart[i].checkOut.format('L'),
+          days: cart[i].checkOut.diff(cart[i].checkin, 'days') + 1,
+          pricePerNight: cart[i].price,
+          totalPrice: cart[i].totalPrice,
+          remove: cart[i].cartId
+        });
+      }
+
+      return cartFiltered;
     },
-    totalRows() {
-      return Events.length
+    cartDetails() {
+      let totalPrice = R.reduce((acc, cartItem) => acc + cartItem.totalPrice, 0, this.$store.getters.getCart);
+      let discountPrice = totalPrice * this.discount / 100;
+
+      let details = [
+        {
+          ' ': `Subtotal (${this.$store.getters.getCart.length} items)`,
+          '  ': totalPrice,
+        },
+        {
+          ' ': `Discount (${this.discount}%)`,
+          '  ': -discountPrice
+        },
+        {
+          ' ': 'Final price',
+          '  ': totalPrice - discountPrice,
+        }
+      ];
+
+      return details;
     }
   }
 }
@@ -120,8 +196,16 @@ const createToast = (bv, text, type) => {
 
 }
 
-.cartTotal {
+.cartDetails {
   float: right;
+  width: 100%;
+
+}
+
+.cartDetails2 {
+  float: right;
+  width: 400px;
+
 }
 
 .cartPay {

@@ -11,7 +11,8 @@ export let Store = {
     users: [ DefaultUser ],
     properties: Properties,
     lastPropertySearch: null,
-    cart: []
+    cart: [],
+    cartCounter: 0
   },
   mutations: { // sync
     // Session
@@ -39,7 +40,11 @@ export let Store = {
       state.lastPropertySearch = payload;
     },
     addToCart: (state, payload) => {
-      state.cart.push(payload);
+      state.cart.push({ ...payload, cartId: state.cartCounter });
+      state.cartCounter++;
+    },
+    removeFromCart: (state, payload) => {
+      state.cart = R.filter(cartItem => cartItem.cartId != payload, state.cart);
     },
   },
   actions: { // async

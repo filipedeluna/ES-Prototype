@@ -15,14 +15,14 @@
             </div>
               <ul>
                 <li>Location: {{ event.location }}</li>
-                <li>Date: {{ event.date.toISOString().split('T')[0] }}</li>
+                <li>Date: {{ toMoment(event.date).format('L') }} to {{ toMoment(event.date).add(event.days, 'days').format('L') }} </li>
                 <li>Tickets Left: {{ event.tickets }}</li>
                 <li>Ticket Price: {{ event.price }}$</li>
                 <li>Website: <a :href="event.site">{{ event.site }}</a></li>
               </ul>
           </div>
           <div class="eventbook">
-            <b-button @click="verifyEvent(event)" size="lg" >Book now!</b-button>
+            <b-button @click="verifyEvent(event)" size="lg" >Find accomodation</b-button>
           </div>
         </div>
          <b-pagination
@@ -32,10 +32,37 @@
         />
       </div>
     </div>
+    <!-- EVENT MODAL -->
+    <b-modal id="event-modal" title="Choose how many participants" centered>
+    <b-form-select         
+      class="eventModalInput"
+      :options="[1, 2, 3, 4, 5]"
+      size="lg"
+      v-model="formData.adults"
+      >
+        <option slot="first" :value="null">Adults</option>
+      </b-form-select>
+      <b-form-select         
+        class="eventModalInput"
+        :options="[0, 1, 2, 3, 4, 5]"
+        :value="null"
+        v-model="formData.children"
+        size="lg" 
+      >
+        <option slot="first" :value="null">Children</option>
+      </b-form-select>
+      <template slot="modal-footer" slot-scope="{ ok }">
+        <b-button @click="findPropertyForEvent(ok)">
+          Confirm
+        </b-button>
+      </template>
+    </b-modal>
   </div>
 </template>
 
 <script>
+import moment from 'moment';
+
 import { Events } from '../data/eventData';
 
 export default {
@@ -45,17 +72,46 @@ export default {
       Events,
       currentPage: 1,
       perPage: 3,
+      formData: {
+        adults: null,
+        children: null
+      },
+      pickedEvent: null
     }
   },
   methods: {
     verifyEvent(event) {
       if (event.tickets <= 0)
         createToast(this.$bvToast, 'Event is at full capacity.', 'danger');
-        
-      const now = new Date();
+
+      const now = moment();
       if (event.date <= now)
         createToast(this.$bvToast, 'Event is not active anymore.', 'danger');
+
+      this.pickedEvent = event;
+      
+      this.$bvModal.show('event-modal');
+      /*
+      this.$store.commit('propertySearch', { 
+        checkin: fixedCheckInDate,
+        checkOut: fixedCheckOutDate,
+        destination: formData.destination,
+        children: fixedChildren,
+        adults: fixedAdults
+        });
+      */
+      //this.$router.push('/showProperties');
+    },
+    findPropertyForEvent() {
+
+    },
+    toMoment(date) {
+      return moment(date);
     }
+
+  },
+  toMoment(date) {
+    return moment(date);
   },
   computed: {
     events() {
@@ -84,6 +140,10 @@ const createToast = (bv, text, type) => {
 .searcheventstitle {
   font-size: 30px;
   padding-left: 60px;
+  margin-bottom: 20px;
+}
+
+.eventModalInput {
   margin-bottom: 20px;
 }
 </style>

@@ -75,7 +75,7 @@ export default {
       formData: {
         adults: null,
         children: null
-      },
+      },       
       pickedEvent: null
     }
   },
@@ -89,20 +89,23 @@ export default {
         createToast(this.$bvToast, 'Event is not active anymore.', 'danger');
 
       this.pickedEvent = event;
-      
+
       this.$bvModal.show('event-modal');
-      /*
-      this.$store.commit('propertySearch', { 
-        checkin: fixedCheckInDate,
-        checkOut: fixedCheckOutDate,
-        destination: formData.destination,
-        children: fixedChildren,
-        adults: fixedAdults
-        });
-      */
-      //this.$router.push('/showProperties');
+    
     },
     findPropertyForEvent() {
+      let fixedChildren = this.formData.children == null ? 0 : this.formData.children;
+      let fixedAdults = this.formData.adults == null ? 1 : this.formData.adults;
+
+      this.$store.commit('propertySearch', { 
+        checkin: moment(this.pickedEvent.date).subtract(1, 'days'),
+        checkOut: moment(this.pickedEvent.date).add(this.pickedEvent.days + 1, 'days'),
+        destination: this.pickedEvent.location,
+        children: fixedChildren,
+        adults: fixedAdults
+      });
+      
+      this.$router.push('/showProperties');
 
     },
     toMoment(date) {

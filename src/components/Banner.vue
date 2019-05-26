@@ -60,7 +60,7 @@ export default {
         return;
       }
 
-      if (registerForm.email.length < 6 || registerForm.email.length > 15) {
+      if (registerForm.email.length < 6 || registerForm.email.length > 30) {
         createToast(this.$bvToast, 'Invalid email.', 'danger');
         return;
       }

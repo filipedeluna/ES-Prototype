@@ -86,6 +86,9 @@ export default {
       this.$store.commit('registerUser', registerForm);
       ok();
     },
+    verifyCart() {
+        this.$router.push('/cart');
+    },
     logout() {
       this.$store.commit('logout');
       createToast(this.$bvToast, 'You are now logged out.', 'success');
@@ -124,7 +127,7 @@ const createToast = (bv, text, type) => {
         </b-navbar-nav>     
       </b-collapse>
 
-      <b-button v-b-modal.cart-modal v-if="this.$store.getters.isLogged">
+      <b-button @click="verifyCart()" v-if="this.$store.getters.isLogged">
         Cart
       </b-button>  
 
@@ -171,17 +174,6 @@ const createToast = (bv, text, type) => {
   <template slot="modal-footer" slot-scope="{ ok }">
     <b-button @click="verifyLogin(ok)">
       Login
-    </b-button>
-  </template>
-</b-modal>
-
-<!-- CART MODAL -->
-<b-modal id="cart-modal" title="Shopping Cart" centered>
-  fsdaf
-    
-  <template slot="modal-footer" slot-scope="{ ok }">
-    <b-button @click="verifyCart(ok)">
-      Confirm and Pay.
     </b-button>
   </template>
 </b-modal>

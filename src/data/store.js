@@ -10,7 +10,8 @@ export let Store = {
     loggedClient: {},
     users: [ DefaultUser ],
     properties: Properties,
-    lastPropertySearch: null
+    lastPropertySearch: null,
+    cart: []
   },
   mutations: { // sync
     // Session
@@ -32,13 +33,14 @@ export let Store = {
         password: payload.password,
         paymentMethods: []
       }
-      console.log(newUser);
       state.users.push(newUser);
     },
     propertySearch: (state, payload) => {
       state.lastPropertySearch = payload;
-    }
-
+    },
+    addToCart: (state, payload) => {
+      state.cart.push(payload);
+    },
   },
   actions: { // async
 
@@ -80,7 +82,9 @@ export let Store = {
         }
       }
       return generatedProperties;
-    }
+    },
+    getCart: state =>
+      state.cart,
   }
 }
 

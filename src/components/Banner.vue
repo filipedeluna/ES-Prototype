@@ -180,6 +180,19 @@ const createToast = (bv, text, type) => {
   </template>
 </b-modal>
 
+<!-- CART MODAL -->
+<b-modal id="login-modal" title="Login" centered>
+  <b-form-input v-model="loginForm.email" type="email" placeholder="Email"></b-form-input>
+  <br>
+  <b-form-input v-model="loginForm.password" type="password" placeholder="Password"></b-form-input>
+  <template slot="modal-footer" slot-scope="{ ok }">
+    <b-button @click="verifyLogin(ok)">
+      Login
+    </b-button>
+  </template>
+</b-modal>
+
+
 <!-- REGISTER MODAL -->
 <b-modal id="register-modal" title="Register Account" centered>
   <b-form-input v-model="registerForm.firstName" type="text" placeholder="First name"></b-form-input>

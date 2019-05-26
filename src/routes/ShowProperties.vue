@@ -2,14 +2,14 @@
   <div class="showproperties">
     <div class="mainBody">
       <div class="propertiestitle">
-        Showing {{ totalRows }} accomodations near {{ /* searchData.destination */ }}.
+        Showing {{ totalRows }} accomodations near {{ searchData.destination }}.
       </div>
       <div class="propertyfilters">
         <b-form-checkbox button class="propertyfilters2" v-model="filters.wifi" size="lg">Wifi</b-form-checkbox>
         <b-form-checkbox button class="propertyfilters2" v-model="filters.pets" size="lg">Pets</b-form-checkbox>
         <b-form-checkbox button class="propertyfilters2" v-model="filters.smokers" size="lg">Smokers</b-form-checkbox>
         <b-form-checkbox button class="propertyfilters2" v-model="filters.cleaning" size="lg">Cleaning</b-form-checkbox>
-        <b-form-select class="propertyfilters2" size="lg" v-model="filters.order" :options="['Price ascending', 'Price Descending']">
+        <b-form-select class="propertyfilters2" size="lg" v-model="filters.order" :options="['Price ascending', 'Price descending']">
           <option slot="first" :value="null">Sort results</option>  
         </b-form-select>        
         <b-form-select class="propertyfilters2" size="lg" v-model="filters.rooms" :options="['1+', '2+', '3+', '4+','5+']">
@@ -18,7 +18,7 @@
         <b-form-select class="propertyfilters2" size="lg" v-model="filters.score" :options="['1+', '2+', '3+', '4+','5']">
           <option slot="first" :value="null">Score</option>  
         </b-form-select>  
-        <b-form-select class="propertyfilters2" size="lg" v-model="filters.distance" :options="['5km', '10km', '15km','+20km']">
+        <b-form-select class="propertyfilters2" size="lg" v-model="filters.distance" :options="['5km', '10km', '15km','+15km']">
           <option slot="first" :value="null">Distance</option>  
         </b-form-select>   
       </div>
@@ -29,10 +29,10 @@
           </div>
           <div class="propertydata">
             <div class="propertytitle">
-              {{ property.name }} in {{ /* searchData.destination */ }}
+              {{ property.name }} in {{ searchData.destination }}
             </div>
               <ul class="propertylist">
-                <li class="propertylistitem">{{ property.distance }} km from {{ /* searchData.destination */ }} center.</li>
+                <li class="propertylistitem">{{ property.distance }} km from {{ searchData.destination }} center.</li>
                 <li class="propertylistitem">Rooms: {{ property.rooms }}</li>
                 <li class="propertylistitem">Wi-fi Access: {{ getYesOrNo(property.wifi) }}</li>
                 <li class="propertylistitem">Pets Allowed: {{ getYesOrNo(property.pets) }}</li>
@@ -56,7 +56,7 @@
               </div>
             </div>
             <div class="propertybook">
-              <b-button @click="verifyProperty(property)" size="lg" >Book now!</b-button>
+              <b-button @click="verifyLogged(property)" size="lg">Book now!</b-button>
             </div>
           </div>
            <div class="propertyPrice">
@@ -74,7 +74,7 @@
     <!-- BOOK MODAL -->
     <b-modal id="book-modal" title="Book Accomodation" centered>
 
-      <span class="bookModalTitle"> {{chosenProperty.name }} in {{ /* searchData.destination */ }}.</span>
+      <span class="bookModalTitle"> {{chosenProperty.name }} in {{ searchData.destination }}.</span>
 
       <div class="modalpropertypic">
         <b-img :src="chosenProperty.picture" fluid rounded></b-img>
@@ -83,7 +83,7 @@
       <div class="bookModalPropertylist">
         <span class="bookModalDetails">Accomodation details:</span>
         <ul>
-          <li class="bookModalPropertylistItem">{{ chosenProperty.distance }} km from {{ /* searchData.destination */ }} center.</li>
+          <li class="bookModalPropertylistItem">{{ chosenProperty.distance }} km from {{ searchData.destination }} center.</li>
           <li class="bookModalPropertylistItem">{{ chosenProperty.rooms }} rooms.</li>
           <li class="bookModalPropertylistItem" v-if="chosenProperty.wifi">Wi-fi access.</li>
           <li class="bookModalPropertylistItem" v-if="chosenProperty.pets">Pets allowed.</li>
@@ -110,21 +110,23 @@
 
         <span class="bookModalDetails">Order details:</span>
         <ul>
-          <li class="bookModalOrderlistItem">{{ chosenProperty.distance }} km from {{ /* searchData.destination */ }} center.</li>
-          <li class="bookModalOrderlistItem">{{ chosenProperty.rooms }} rooms.</li>
-          <li class="bookModalOrderlistItem" v-if="chosenProperty.wifi">Wi-fi access.</li>
-          <li class="bookModalOrderlistItem" v-if="chosenProperty.pets">Pets allowed.</li>
-          <li class="bookModalOrderlistItem" v-if="chosenProperty.smokers">Smokers allowed.</li>
-          <li class="bookModalOrderlistItem" v-if="chosenProperty.cleaning">Cleaning included.</li>
-          <li class="bookModalOrderlistItem" v-if="chosenProperty.guests">Guests allowed.</li>
-          <li class="bookModalOrderlistItem" v-if="chosenProperty.garage">Garage.</li>
+          <li class="bookModalOrderlistItem">Checkin date: {{ searchData.checkin.format('L') }}.</li>
+          <li class="bookModalOrderlistItem">Checkout date: {{ searchData.checkOut.format('L') }}.</li>
+          <li class="bookModalOrderlistItem">Number of adults: {{ searchData.adults }}.</li>
+          <li class="bookModalOrderlistItem">Number of children: {{ searchData.children }}.</li>
+          <li class="bookModalOrderlistItem">Total days: {{ searchData.checkOut.diff(searchData.checkin, 'days') + 1 }}.</li>
         </ul>
       </div>
 
+      <div class="bookModalTotal">
+        Total:
+        <br>
+        <span class="bookModalTotalPrice">{{ calculateTotalPrice(searchData.adults, searchData.children, chosenProperty.price, searchData.checkOut.diff(searchData.checkin, 'days') + 1) }} €</span>        
+      </div>
 
       <template slot="modal-footer" slot-scope="{ ok }">
-        <b-button @click="AddPropertyToCart(ok)">
-          Confirm.
+        <b-button size="lg" @click="verifyProperty(ok, { chosenProperty, searchData })">
+          Add to cart
         </b-button>
       </template>
     </b-modal>
@@ -148,8 +150,8 @@ let filters = {
 export default {
   name: 'ShowProperties',
   beforeMount(){
-    //if (!this.$store.getters.wasPropertySearched)
-      //this.$router.push('/');
+    if (!this.$store.getters.wasPropertySearched)
+      this.$router.push('/');
   },
   data() {
     return {
@@ -165,26 +167,34 @@ export default {
     }
   },
   methods: {
-    verifyProperty(property) {
-      
-      this.chosenProperty = property;
-      this.$bvModal.show('book-modal');
+    verifyLogged(property) {
       if (!this.$store.getters.isLogged) {
         createToast(this.$bvToast, 'Please login to book an accomodation.', 'danger');
         return;
       }
-      
+
+      this.chosenProperty = property;
+      this.$bvModal.show('book-modal');
+    },
+    verifyProperty(ok, property) {
+      this.$store.commit('addToCart', property);
+
+      createToast(this.$bvToast, 'Accomodation added to cart.', 'success');
+      this.$router.push('/');      
+      ok();
     },
     getYesOrNo(val) {
       return val ? 'Yes' : 'No';
     },
-    AddPropertyToCart(ok) {
-      ok();
+    calculateTotalPrice(adults, children, costPerDay, days) {
+      let adultsFix = adults != null ? adults : 0;
+      let childrenFix = children != null ? children : 0;
+      
+      return (costPerDay * adultsFix + costPerDay * 0.5 * children) * days;
     }
   },
   computed: {
     getFilteredProperties() {
-      console.log(JSON.stringify(filters, null, 2));
       this.filteredProperties = R.filter(property => 
         (!this.filters.wifi     || property.wifi ===     this.filters.wifi)     &&
         (!this.filters.pets     || property.pets ===     this.filters.pets)     &&
@@ -194,6 +204,16 @@ export default {
         checkScore(this.filters.score, property.score) &&
         checkDistance(this.filters.distance, property.distance)
       , this.properties);
+
+      if(this.filters.order != null) {
+        if (this.filters.order == 'Price ascending')
+          this.filteredProperties = 
+            R.sort((a, b) => a.price - b.price, this.filteredProperties);
+
+        if (this.filters.order == 'Price descending')
+          this.filteredProperties = 
+            R.sort((a, b) => b.price - a.price, this.filteredProperties);
+      }
 
       return this.filteredProperties.slice(
         (this.currentPage - 1) * this.perPage, 
@@ -229,7 +249,7 @@ const checkDistance = (formValue, propertyDistance) =>
   formValue == '5km'  && propertyDistance <= 5  ||
   formValue == '10km' && propertyDistance <= 10 ||
   formValue == '15km' && propertyDistance <= 15 ||
-  formValue == '20km' && propertyDistance >= 20 ||
+  formValue == '+15km' && propertyDistance > 15 ||
   formValue == null;
 
 // HELPER 
@@ -254,7 +274,7 @@ const createToast = (bv, text, type) => {
 }
 
 .modalpropertypic {
-  width: 250px;
+  width: 280px;
   float: left;
 }
 
@@ -273,6 +293,11 @@ const createToast = (bv, text, type) => {
   width: 100%;
 }
 
+.bookModalPropertylistItem {
+  margin-left: -10px;
+  line-height: 30px;
+}
+
 .bookModalTitle {
   float: left;
   font-size: 26px;
@@ -283,10 +308,26 @@ const createToast = (bv, text, type) => {
 
 .bookModalOrderlist {
   float: left;
-  width: 100%;
 }
 
 .bookModalOrderlistItem {
+  margin-left: -10px;
+  line-height: 30px;
 }
 
+.bookModalTotal {
+  font-size: 30px;
+  color: #007bff;
+  float: left;
+  line-height: 35px;
+  margin-right: 50px;
+  margin-top: 200px;
+}
+
+.bookModalTotalPrice {
+  font-size: 42px;
+  font-weight: 700;
+  color: #007bff;
+  margin-left: 10px;
+}
 </style>

@@ -2,7 +2,7 @@
   <div class="showproperties">
     <div class="mainBody">
       <div class="propertiestitle">
-        Showing {{ totalRows }} accomodations near {{ searchData.destination }}.
+        Showing {{ getFilteredProperties.length }} accomodations near {{ searchData.destination }}.
       </div>
       <div class="propertyfilters">
         <b-form-checkbox button class="propertyfilters2" v-model="filters.wifi" size="lg">Wifi</b-form-checkbox>
@@ -23,7 +23,7 @@
         </b-form-select>   
       </div>
       <div class="properties">
-        <div class="property" v-for="property in getFilteredProperties" v-bind:key="property.id">
+        <div class="property" v-for="property in paginate(getFilteredProperties)" v-bind:key="property.id">
           <div class="propertypic">
               <b-img :src="property.picture" fluid rounded></b-img>
           </div>
@@ -65,7 +65,7 @@
         </div>
 
          <b-pagination
-          :total-rows="totalRows" 
+          :total-rows="getFilteredProperties.length" 
           v-model="currentPage"
           :per-page="perPage"
         />
@@ -190,12 +190,19 @@ export default {
       let adultsFix = adults != null ? adults : 0;
       let childrenFix = children != null ? children : 0;
       
-      return (costPerDay * adultsFix + costPerDay * 0.5 * children) * days;
+      return (costPerDay * adultsFix + costPerDay * 0.5 * childrenFix) * days;
+    },
+    paginate(properties) {
+      return properties.slice(
+        (this.currentPage - 1) * this.perPage, 
+        this.currentPage * this.perPage);
     }
   },
   computed: {
     getFilteredProperties() {
-      this.filteredProperties = R.filter(property => 
+      let results = this.filteredProperties;
+
+      results = R.filter(property => 
         (!this.filters.wifi     || property.wifi ===     this.filters.wifi)     &&
         (!this.filters.pets     || property.pets ===     this.filters.pets)     &&
         (!this.filters.smokers  || property.smokers ===  this.filters.smokers)  &&
@@ -207,18 +214,15 @@ export default {
 
       if(this.filters.order != null) {
         if (this.filters.order == 'Price ascending')
-          this.filteredProperties = 
-            R.sort((a, b) => a.price - b.price, this.filteredProperties);
+          results = 
+            R.sort((a, b) => a.price - b.price, results);
 
         if (this.filters.order == 'Price descending')
-          this.filteredProperties = 
-            R.sort((a, b) => b.price - a.price, this.filteredProperties);
+          results = 
+            R.sort((a, b) => b.price - a.price, results);
       }
 
-      return this.filteredProperties.slice(
-        (this.currentPage - 1) * this.perPage, 
-        this.currentPage * this.perPage
-        );
+      return results;
     },
     location() {
       return this.$route.params.location;

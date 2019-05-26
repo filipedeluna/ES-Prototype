@@ -124,14 +124,9 @@ const createToast = (bv, text, type) => {
         </b-navbar-nav>     
       </b-collapse>
 
-      <router-link 
-        to="/cart" 
-        v-if="this.$store.getters.isLogged" 
-        tag="b-button" 
-        type="submit"
-      >
-        Cart 
-      </router-link>      
+      <b-button v-b-modal.cart-modal v-if="this.$store.getters.isLogged">
+        Cart
+      </b-button>  
 
       &nbsp;
       &nbsp;
@@ -181,17 +176,15 @@ const createToast = (bv, text, type) => {
 </b-modal>
 
 <!-- CART MODAL -->
-<b-modal id="login-modal" title="Login" centered>
-  <b-form-input v-model="loginForm.email" type="email" placeholder="Email"></b-form-input>
-  <br>
-  <b-form-input v-model="loginForm.password" type="password" placeholder="Password"></b-form-input>
+<b-modal id="cart-modal" title="Shopping Cart" centered>
+  fsdaf
+    
   <template slot="modal-footer" slot-scope="{ ok }">
-    <b-button @click="verifyLogin(ok)">
-      Login
+    <b-button @click="verifyCart(ok)">
+      Confirm and Pay.
     </b-button>
   </template>
 </b-modal>
-
 
 <!-- REGISTER MODAL -->
 <b-modal id="register-modal" title="Register Account" centered>

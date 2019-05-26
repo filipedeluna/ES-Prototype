@@ -55,8 +55,6 @@ export default {
       const now = new Date();
       if (event.date <= now)
         createToast(this.$bvToast, 'Event is not active anymore.', 'danger');
-
-      
     }
   },
   computed: {

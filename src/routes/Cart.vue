@@ -25,12 +25,15 @@
       </div>
       <br>
       <div class="cartPay">
+          <b-input type="range" v-model="pointsUsed" min="0" :max="maxPoints" style="radiocartpay" placeholder="Discount Code"/> 
+          Points used {{ pointsUsed }} / {{ maxPoints }}
         <b-form inline>
+          <br>
           <b-input size="lg" v-model="discountCode" style="float: right; margin-top: 20px;" placeholder="Discount Code"/>
           <b-button size="lg" variant="primary" @click="validateDiscount()" style="float: right; margin-top: 20px;">Validate</b-button>
         </b-form>
         <br>
-        <b-button style="float: right;" @click="3" size="lg" >Confirm and pay</b-button>
+        <b-button style="float: right;" @click="validatePayment(calculateFinalPrice())" size="lg" >Confirm and pay</b-button>
       </div>
     </div>
   </div>
@@ -60,7 +63,8 @@ export default {
       perPage: 3,
       discount: 0,
       discountCode: null,
-      cartItemFields
+      cartItemFields,
+      pointsUsed: 0
     }
   },
   methods: {
@@ -82,19 +86,34 @@ export default {
         switch(this.discountCode) {
           case 'BOOKINGPLUS20': 
             this.discount = 20;
-            createToast(this.$bvToast, 'Discount code validated.', 'danger');
+            createToast(this.$bvToast, 'Discount code validated.', 'success');
             return;
           case 'BOOKINGPLUS40': 
             this.discount = 40;
-            createToast(this.$bvToast, 'Discount code validated.', 'danger');
+            createToast(this.$bvToast, 'Discount code validated.', 'success');
           return;
           case 'BOOKINGPLUS60': 
             this.discount = 60;
-            createToast(this.$bvToast, 'Discount code validated.', 'danger');
+            createToast(this.$bvToast, 'Discount code validated.', 'success');
           return;
         }
       }
       createToast(this.$bvToast, 'Invalid discount code.', 'danger');
+    },
+    calculateFinalPrice() {
+      let totalPrice = R.reduce((acc, cartItem) => acc + cartItem.totalPrice, 0, this.$store.getters.getCart);
+      let discountPrice = totalPrice * this.discount / 100;
+
+      return totalPrice - discountPrice - this.pointsUsed;
+    },
+    validatePayment(totalSpent) {
+      let pointsFixed = this.pointsUsed != null ? this.pointsUsed : 0;
+      let totalFixed = totalSpent != null ? totalSpent : 0;
+
+      this.$store.commit('payCart', { pointsSpent: pointsFixed , totalSpent: totalFixed });
+
+      createToast(this.$bvToast, `Successfully paid ${totalFixed} €. You won ${Math.floor(totalFixed / 10)} points with this purchase.`, 'success');
+      this.$router.push('/showProperties');
     }
   },
   computed: {
@@ -121,23 +140,31 @@ export default {
     cartDetails() {
       let totalPrice = R.reduce((acc, cartItem) => acc + cartItem.totalPrice, 0, this.$store.getters.getCart);
       let discountPrice = totalPrice * this.discount / 100;
+      let finalPrice = totalPrice - discountPrice - this.pointsUsed;
 
       let details = [
         {
           ' ': `Subtotal (${this.$store.getters.getCart.length} items)`,
-          '  ': totalPrice,
+          '  ': `${totalPrice} €`,
         },
         {
-          ' ': `Discount (${this.discount}%)`,
-          '  ': -discountPrice
+          ' ': `Discount Code (${this.discount}%)`,
+          '  ': `${-discountPrice} €`
+        },
+        {
+          ' ': `Points Discount (${this.pointsUsed})`,
+          '  ': `${-this.pointsUsed} €`
         },
         {
           ' ': 'Final price',
-          '  ': totalPrice - discountPrice,
+          '  ': `${finalPrice < 0 ? 0 : finalPrice} €`,
         }
       ];
 
       return details;
+    },
+    maxPoints() {
+      return this.$store.getters.loggedClient.points != null ? this.$store.getters.loggedClient.points : 0
     }
   }
 }
@@ -192,7 +219,7 @@ const createToast = (bv, text, type) => {
 
 }
 
-.cartItemPrice {
+.radiocartpay {
 
 }
 

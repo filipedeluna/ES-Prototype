@@ -186,12 +186,15 @@ export default {
         return;
       }
 
-      if (formData.adults == null || formData.adults > 5 || formData.adults < 1) {
+      let fixedChildren = formData.children != null ? formData.children : 0;
+      let fixedAdults = formData.adults != null ? formData.adults : 1;
+
+      if (fixedAdults.adults > 5 || fixedAdults.adults < 1) {
         createToast(this.$bvToast, 'Invalid number of adullts.', 'danger');
         return;
       }
 
-      if (formData.children == null || formData.children > 5 || formData.children < 0) {
+      if (fixedChildren.children > 5 || fixedChildren.children < 0) {
         createToast(this.$bvToast, 'Invalid number of children.', 'danger');
         return;
       }
@@ -200,8 +203,8 @@ export default {
         checkin: fixedCheckInDate,
         checkOut: fixedCheckOutDate,
         destination: formData.destination,
-        children: formData.children,
-        adults: formData.adults
+        children: fixedChildren,
+        adults: fixedAdults
         });
 
         this.$router.push('/showProperties');

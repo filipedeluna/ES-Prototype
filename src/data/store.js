@@ -32,7 +32,8 @@ export let Store = {
         lastName: payload.lastName,
         email: payload.email,
         password: payload.password,
-        paymentMethods: []
+        paymentMethods: [],
+        points: 100
       }
       state.users.push(newUser);
     },
@@ -46,6 +47,12 @@ export let Store = {
     removeFromCart: (state, payload) => {
       state.cart = R.filter(cartItem => cartItem.cartId != payload, state.cart);
     },
+    payCart: (state, payload) => {
+      state.cart = [];
+      state.loggedClient.points -= payload.pointsSpent;
+      state.loggedClient.points += Math.floor(payload.totalSpent / 10);
+      state.loggedClient.points = state.loggedClient.points >= 0 ? state.loggedClient.points : 0;
+    }
   },
   actions: { // async
 

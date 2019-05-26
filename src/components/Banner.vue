@@ -87,7 +87,11 @@ export default {
       ok();
     },
     verifyCart() {
-        this.$router.push('/cart');
+      if (this.$store.getters.getCart.length <= 0) {
+        createToast(this.$bvToast, 'Cart is currently empty.', 'danger');
+        return;
+      }
+      this.$router.push('/cart');
     },
     logout() {
       this.$store.commit('logout');
@@ -149,6 +153,12 @@ const createToast = (bv, text, type) => {
 
       <b-nav-text v-if="this.$store.getters.isLogged">
        {{ `Hello, ${this.$store.getters.loggedClient.firstName}` }}
+      </b-nav-text> 
+  
+      <b-nav-text v-if="this.$store.getters.isLogged">
+          &nbsp;
+          &nbsp;
+        {{ `Points: ${this.$store.getters.loggedClient.points}` }}
       </b-nav-text> 
 
       &nbsp;

@@ -10,6 +10,8 @@ export let Store = {
     loggedClient: {},
     users: [ DefaultUser ],
     properties: Properties,
+    userProperties: [],
+    userPropertiesCounter: 0,
     lastPropertySearch: null,
     cart: [],
     cartCounter: 0
@@ -52,6 +54,23 @@ export let Store = {
       state.loggedClient.points -= payload.pointsSpent;
       state.loggedClient.points += Math.floor(payload.totalSpent / 10);
       state.loggedClient.points = state.loggedClient.points >= 0 ? state.loggedClient.points : 0;
+    },
+    insertProperty: (state, payload) => {
+      const reviews = 0;
+      const score = 1;
+      const distance = Math.floor((Math.random() * 25 )) + 1 ;
+
+      state.userProperties.push({
+        id: state.userPropertiesCounter,
+        picture: 'pictures/properties/undefined.jpg',
+        ...payload,
+        reviews,
+        score,
+        distance,
+
+      });
+
+      state.userPropertiesCounter++;
     }
   },
   actions: { // async
@@ -77,7 +96,7 @@ export let Store = {
     },
     getProperties: state =>
       state.properties,
-    generateProperties: state => {
+    generateProperties: (state, location) => {
       let generatedProperties = state.properties;
     
       for (let i = 0; i < generatedProperties.length; i++) {
@@ -93,7 +112,15 @@ export let Store = {
           distance: Math.floor((Math.random() * 25 )) + 1 
         }
       }
-      return generatedProperties;
+
+      let userProps = R.filter(prop => 
+        state.lastPropertySearch.destination.toUpperCase() == prop.location.toUpperCase(),
+        state.userProperties)
+      
+      return R.concat(generatedProperties, userProps);
+    },
+    getUserProperties: (state, payload) => {
+      return 1;
     },
     getCart: state =>
       state.cart,

@@ -96,7 +96,7 @@ export let Store = {
     },
     getProperties: state =>
       state.properties,
-    generateProperties: (state, location) => {
+    generateProperties: state => {
       let generatedProperties = state.properties;
     
       for (let i = 0; i < generatedProperties.length; i++) {
@@ -118,9 +118,6 @@ export let Store = {
         state.userProperties)
       
       return R.concat(generatedProperties, userProps);
-    },
-    getUserProperties: (state, payload) => {
-      return 1;
     },
     getCart: state =>
       state.cart,

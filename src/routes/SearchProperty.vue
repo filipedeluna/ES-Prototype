@@ -59,77 +59,7 @@
 <script>
 import moment from 'moment';
 
-const cities = [
-  'Hong Kong',
-  'Bangkok',
-  'London',
-  'Singapore',
-  'Macau',
-  'Dubai',
-  'Paris',
-  'New York',
-  'Shenzhen',
-  'Kuala Lumpur',
-  'Delhi',
-  'Tokyo',
-  'Rome',
-  'Mumbai',
-  'Mecca',
-  'Istanbul',	 
-  'Prague',
-  'Miami',
-  'Seoul',
-  'Barcelona ',
-  'Pattaya',
-  'Shanghai',
-  'Milan',
-  'Cancún',
-  'Agra',
-  'Las Vegas', 
-  'Amsterdam',
-  'Antalya',
-  'Denpasar',
-  'Osaka',
-  'Los Angeles',
-  'Vienna',
-  'Berlin',
-  'Madrid',
-  'Johor Bahru ',
-  'Johannesburg',
-  'Riyadh',
-  'Ho Chi Minh',
-  'Venice',
-  'Orlando',
-  'Chennai',
-  'Jaipur',
-  'Athens',
-  'Dublin',
-  'Florence',
-  'Moscow',
-  'Toronto',
-  'Hanoi',
-  'Beijing',
-  'Ha Long',
-  'Sydney',
-  'Budapest',
-  'Punta Cana',
-  'San Francisco',
-  'Jakarta',
-  'Dammam',
-  'Lisbon',
-  'Zhuhai',
-  'Heraklion',
-  'Penang Island',
-  'Cairo',
-  'Copenhagen',
-  'Kyoto',
-  'Phnom Penh',
-  'Munich',
-  'Doha',
-  'Chiang Mai',
-  'Edirne',
-  'Jerusalem'
-];
+import { Cities } from '../data/appData';
 
 const formData = {
     destination: null,
@@ -143,7 +73,7 @@ export default {
   name: 'SearchProperty',
   data() {
     return {
-      cities,
+      Cities,
       formData
     } 
   },
@@ -219,13 +149,13 @@ export default {
       let blacklisted = [];
 
       for (let i = 0; i < 25; i++) {
-        let random = Math.floor(Math.random() * cities.length);
+        let random = Math.floor(Math.random() * Cities.length);
         while (blacklisted.includes(random)) {
-          random = Math.floor(Math.random() * cities.length);
+          random = Math.floor(Math.random() * Cities.length);
         }
 
         blacklisted.push(random);
-        pickedCities.push(cities[random])
+        pickedCities.push(Cities[random])
       }
 
       return pickedCities;

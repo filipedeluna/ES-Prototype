@@ -4,6 +4,7 @@ import SearchEvent from '../routes/SearchEvent';
 import SearchProperty from '../routes/SearchProperty';
 import RegisterProperty from '../routes/RegisterProperty';
 import ShowProperties from '../routes/ShowProperties';
+import ShowItinerary from '../routes/ShowItinerary';
 
 export const Routes = [
   {
@@ -49,11 +50,18 @@ export const Routes = [
     id: 6
   },
   { // Redirect all garbage to home
+    path: '/showItinerary',
+    name: 'Show Itinerary',
+    component: ShowItinerary,
+    banner: false,
+    id: 7
+  },
+  { // Redirect all garbage to home
     path: '*',
     redirect: '/searchproperty',
     component: ShowProperties,
     banner: false,
-    id: 7
+    id: 8
   },
 ]
 

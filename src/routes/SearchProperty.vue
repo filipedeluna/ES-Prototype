@@ -81,7 +81,7 @@ export default {
     verifyData() {
       if (formData.destination == null || 
           formData.destination.length < 3 || 
-          formData.destination.length > 10) {
+          formData.destination.length > 15) {
         createToast(this.$bvToast, 'Invalid destination.', 'danger');
         return;
       }

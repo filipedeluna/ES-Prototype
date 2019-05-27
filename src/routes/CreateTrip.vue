@@ -11,7 +11,7 @@
           <b-input size="lg" v-model="formData.checkIn" type="date" class="searchPropertyinput"/>
           <b-input size="lg" v-model="formData.checkOut" type="date" class="searchPropertyinput"/>
           <b-input-group append="€" style="width: 150px;">
-            <b-input size="lg" v-model="formData.price" placeholder="Budget" min="0"/>
+            <b-input size="lg" v-model="formData.budget" placeholder="Budget" min="0"/>
           </b-input-group>
           <b-form-select         
             class="searchPropertyinput"
@@ -34,7 +34,7 @@
             >
               <option slot="first" :value="null">Children</option>
             </b-form-select>
-          <b-button size="lg" variant="primary" @click="verifyData()">Search Acommodations</b-button>
+          <b-button size="lg" variant="primary" @click="verifyData()">Start itinerary</b-button>
         </b-form>
       </div>
       <div class="searchpropertytitle2"> 
@@ -45,7 +45,7 @@
           :img-src="attraction.picture"
           img-top
           tag="article"
-          style="max-width: 15rem;"
+          style="max-width: 12rem;"
           class="searchpropertyrecommendationscard"
           v-for="attraction in randomAttractions"
           v-bind:key="attraction.id"
@@ -70,7 +70,8 @@ const formData = {
     checkIn: null,
     checkOut: null,
     adults: null,
-    children: null
+    children: null,
+    budget: 0
   };
 
 export default {
@@ -86,7 +87,7 @@ export default {
     verifyData() {
       if (formData.destination == null || 
           formData.destination.length < 3 || 
-          formData.destination.length > 10) {
+          formData.destination.length > 15) {
         createToast(this.$bvToast, 'Invalid destination.', 'danger');
         return;
       }
@@ -98,6 +99,11 @@ export default {
 
       if (formData.checkOut == null) {
         createToast(this.$bvToast, 'Invalid checkout date.', 'danger');
+        return;
+      }
+
+      if (formData.budget <= 0) {
+        createToast(this.$bvToast, 'Invalid budget.', 'danger');
         return;
       }
 
@@ -135,20 +141,18 @@ export default {
       }
       
       this.$store.commit('propertySearch', { 
+        destination: formData.destination,
         checkin: fixedCheckInDate,
         checkOut: fixedCheckOutDate,
-        destination: formData.destination,
         children: fixedChildren,
-        adults: fixedAdults
-        });
+        adults: fixedAdults,
+        budget: this.formData.budget
+      });
 
-        this.$router.push('/showProperties');
+      this.$router.push('/showItinerary');
     }
   },
   computed: {
-    properties() {
-      return this.$store.getters.getProperties;
-    },
     randomAttractions() {
       let pickedCities = [];
       let blacklistedCities = [];
@@ -177,7 +181,7 @@ export default {
         }
 
         blacklistedAttractions.push(random);
-        pickedAttractions.push( { ...Attractions[random], ...Cities[random] });
+        pickedAttractions.push( { ...Attractions[random], ...pickedCities[random] });
       }
 
 
@@ -205,9 +209,6 @@ const createToast = (bv, text, type) => {
   width: 100%;
   display: flex;
   justify-content: center;
-}
-
-.searchPropertyinput {
 }
 
 .searchpropertytitle {

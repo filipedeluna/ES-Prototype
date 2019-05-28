@@ -132,7 +132,7 @@ export default {
           checkOut: cart[i].checkOut.format('L'),
           days: cart[i].checkOut.diff(cart[i].checkin, 'days') + 1,
           pricePerNight: cart[i].price,
-          totalPrice: cart[i].totalPrice,
+          totalPrice: Number(cart[i].totalPrice),
           remove: cart[i].cartId
         });
       }
@@ -147,7 +147,7 @@ export default {
       let details = [
         {
           ' ': `Subtotal (${this.$store.getters.getCart.length} items)`,
-          '  ': `${totalPrice} €`,
+          '  ': `${Number(totalPrice)} €`,
         },
         {
           ' ': `Discount Code (${this.discount}%)`,

@@ -53,7 +53,7 @@
         style="width: 10%; margin: auto;"
       />
 
-      <b-button class="itineraryLeftBtn" variant="success" size="lg"> 
+      <b-button class="itineraryLeftBtn" variant="success" size="lg" @click="() => this.$bvModal.show('premadeItinerary-modal')"> 
         Check out our discounted itineraries
       </b-button> 
 
@@ -77,7 +77,7 @@
 
     <!-- confirm BUY ITINERARY MODAL -->
     <b-modal id="confirmItinerary-modal" title="Confirm Itinerary" size="lg" centered>
-        The total cost of itinerary pack is {{ totalCost }}€.
+        The total cost of the chosen itinerary is {{ totalCost }}€.
         <br>
         <br>
         This amount is {{ totalCost - searchData.budget }}€ over your initial budget of {{  searchData.budget }}€.
@@ -86,17 +86,58 @@
         Do you wish to continue and add it to your cart?
       <template slot="modal-footer" slot-scope="{ ok }">
         <b-button @click="addItineraryToCart(ok)">
-          Login
+          Book itinerary
         </b-button>
       </template>
     </b-modal>
 
       <!-- BUY PACK MODAL -->
-    <b-modal id="safd-modal" title="Login" centered>
-     
-      <template slot="modal-footer" slot-scope="{ ok }">
-        <b-button @click="ok()">
-          Login
+    <b-modal id="premadeItinerary-modal" title="Buy discounted itinerary" size="xl" centered>
+      <div class="premadeItineraries">
+        <div class="premadeItinerary" v-for="pack in buildPacks" v-bind:key="pack.discount"> 
+          <b-img class="premadeItineraryPic" :src="pack.pic"/>
+          <ul class="premadeItineraryAttractions">
+            <li v-for="attraction in pack.attractions" v-bind:key="attraction+pack.discount">
+              {{ Attractions[attraction].name }}
+            </li>
+          </ul>
+
+          <div class="premadeItinerartTitleAndPrice">
+            <div class="premadeItinerartTitle">
+              {{ pack.name }}
+            </div>
+            <div class="premadeItineraryPrice">
+              <span style="text-decoration: line-through;font-size: 22px;"> {{ pack.price }} €</span>
+              <span style="font-size: 44px; color: #007bff;"> {{ applyDiscountOnPack(pack) }} €</span>
+              <br>
+              <br>
+              <span style="font-size: 28px;"> {{ pack.discount }}% OFF</span>
+            </div>
+          </div>
+          <div class="premadeItineraryBuy">
+            <b-button @click="addPremadeItineraryToCart(pack)" v-if="applyDiscountOnPack(pack) > searchData.budget" block variant="danger" size="lg">Buy now</b-button>
+            <b-button @click="addPremadeItineraryToCart(pack)" v-if="applyDiscountOnPack(pack) <= searchData.budget" block variant="success" size="lg">Buy now</b-button>
+          </div>
+        </div>
+        
+        
+        
+          <!--
+          <b-card
+          :img-src="attraction.picture"
+          img-top
+          tag="article"
+          style="max-width: 8rem;"
+          class="showItinerariesCard"
+          v-for="attraction in paginate(randomAttractions)"
+          v-bind:key="attraction.id"
+          @click="pickAttraction(attraction.id)"
+          v-bind:class="{ attractionPicked: isPicked(attraction.id) }"
+        -->
+      </div>
+      <template slot="modal-footer" slot-scope="{ close }">
+        <b-button @click="close()">
+          Close
         </b-button>
       </template>
     </b-modal>
@@ -132,7 +173,8 @@ export default {
       chosenProperty: {
         score: 3
       },
-      pickedAttractions
+      pickedAttractions,
+      Attractions
     }
   },
   methods: {
@@ -148,7 +190,7 @@ export default {
     verifyProperty(ok, property) {
       this.$store.commit('addToCart', property);
 
-      createToast(this.$bvToast, 'Accomodation added to cart.', 'success');
+      createToast(this.$bvToast, 'Itinerary added to cart.', 'success');
       this.$router.push('/');      
       ok();
     },
@@ -176,11 +218,12 @@ export default {
       return R.includes(attractionId, this.pickedAttractions);
     }, 
     actualPrice(base) {
+
       return base * (this.searchData.adults + this.searchData.children * 0.5);
     },
     addItineraryToCart(ok) {
       if (!this.$store.getters.isLogged) {
-        createToast(this.$bvToast, 'Please login to book an accomodation.', 'danger');
+        createToast(this.$bvToast, 'Please login to book an itinerary.', 'danger');
         return;
       }
 
@@ -191,9 +234,28 @@ export default {
         ...this.searchData
       });
 
-      createToast(this.$bvToast, 'Accomodation added to cart.', 'success');
+      createToast(this.$bvToast, 'Itinerary added to cart.', 'success');
       this.$router.push('/');      
       ok();
+    },
+    addPremadeItineraryToCart(pack) {
+      if (!this.$store.getters.isLogged) {
+        createToast(this.$bvToast, 'Please login to book an itinerary.', 'danger');
+        return;
+      }
+
+      this.$store.commit('addToCart', {
+        fixedName: this.searchData.destination + ' ' + pack.name,
+        totalPrice: this.applyDiscountOnPack(pack),
+        price: 'N/A',
+        ...this.searchData
+      });
+
+      createToast(this.$bvToast, 'Itinerary added to cart.', 'success');
+      this.$router.push('/');      
+    }, 
+    applyDiscountOnPack(pack) {
+      return (pack.price - pack.price * pack.discount / 100).toFixed(0)
     }
   },
   computed: {
@@ -242,9 +304,65 @@ export default {
     },
     overBudget() {
       return this.totalCost > this.searchData.budget
+    },
+    buildPacks() {
+      const PICFOLDER = 'pictures/itineraries/';
+
+      const adventurerAttractions = getRandomEntries(Attractions, 4);
+      const conquerorAttractions = getRandomEntries(Attractions, 3);
+      const explorerAttractions = getRandomEntries(Attractions, 5);
+
+      const adventurerOriginalPrice = R.reduce((a, entry) => a + Attractions[entry].price, 0, adventurerAttractions); 
+      const conquerorOriginalPrice = R.reduce((a, entry) => a + Attractions[entry].price, 0, conquerorAttractions); 
+      const explorerOriginalPrice = R.reduce((a, entry) => a + Attractions[entry].price, 0, explorerAttractions); 
+
+      const adventurerFixed = fixPrice(this.searchData, adventurerOriginalPrice);
+      const conquerorFixed = fixPrice(this.searchData, conquerorOriginalPrice);
+      const explorerFixed = fixPrice(this.searchData, explorerOriginalPrice);
+      
+      const packs = [
+        {
+          name: 'Adventurer Pack',
+          pic: PICFOLDER + 'adventurer.jpg',
+          discount: 33,
+          attractions: getRandomEntries(Attractions, 4),
+          price: adventurerFixed
+        },
+        {
+          name: 'Conqueror Pack',
+          pic: PICFOLDER + 'conqueror.jpg',
+          discount: 25,
+          attractions: getRandomEntries(Attractions, 3),
+          price: conquerorFixed
+        },
+        {
+          name: 'Explorer Pack',
+          pic: PICFOLDER + 'explorer.jpg',
+          discount: 40,
+          attractions: getRandomEntries(Attractions, 5),
+          price: explorerFixed
+        }
+      ];
+
+      return packs;
     }
   }
 }
+
+const getRandomEntries = (array, quantity) => {
+  const result = [];
+  let random;
+
+  for (let i = 0; i < quantity; i++) {
+    do
+      random = Math.floor(Math.random() * array.length);
+    while (result.includes(random));
+
+    result.push(random);
+  }
+
+  return result;
+};
 
 const fixPrice = (data, base) =>
   base * (data.adults + data.children * 0.5)
@@ -360,5 +478,65 @@ const createToast = (bv, text, type) => {
   margin-left: 80px;
   position: relative;
   top: -40px;
+}
+
+.premadeItineraries {
+  width: 100%;
+  margin: auto;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.premadeItineraryPic {
+  width: 140px;
+  float: left;
+}
+
+.premadeItinerary { 
+  width: 1200px;;
+  height: 180px;
+  background-color:#e6e6e6;
+  padding-left: 20px;
+  padding-top: 20px;
+  margin-bottom: 20px;
+  margin-left: 70px;
+  margin-right: 70px;
+  border-radius: 10px;
+}
+
+.premadeItineraryAttractions{
+  float: left;
+  font-size: 16px;
+  width: 190px;
+}
+
+.premadeItinerartTitleAndPrice {
+  float: left;
+  padding-left: 40px;
+  width: 300px;
+}
+
+.premadeItinerartTitle {
+  width: 100%;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 10px;
+  margin-bottom: 20px;
+}
+
+.premadeItineraryPrice {
+  padding-top: 20px;
+  line-height: 24px;
+  font-size: 18px;
+}
+
+.premadeItineraryBuy {
+  float: right;
+  width: 200px;
+  padding-right: 40px;
+  padding-top: 90px;
 }
 </style>

@@ -33,7 +33,13 @@
                   <i class="material-icons itinerariesstar">star_border</i>
               </div>
               <br>
-              <span class="itineraryPrice">{{attraction.price}} €</span>
+              <span class="itineraryPrice">
+                <span style="color: black; font-size: 20px;">
+                  {{attraction.price}} € * {{searchData.adults + searchData.children * 0.5}}
+                </span>
+                <br>
+                {{actualPrice(attraction.price)}} €
+              </span>
             </div>
           </b-card-text>
         </b-card>
@@ -55,6 +61,7 @@
         class="itineraryRightBtn"
         v-if="!overBudget"
         variant="primary" size="lg"
+        @click="addItineraryToCart(ok)"
       > 
         Build itinerary with chosen attractions
       </b-button> 
@@ -67,6 +74,7 @@
         Build itinerary with chosen attractions
       </b-button> 
     </div>
+
     <!-- confirm BUY ITINERARY MODAL -->
     <b-modal id="confirmItinerary-modal" title="Confirm Itinerary" size="lg" centered>
         The total cost of itinerary pack is {{ totalCost }}€.
@@ -77,14 +85,14 @@
         <br>
         Do you wish to continue and add it to your cart?
       <template slot="modal-footer" slot-scope="{ ok }">
-        <b-button @click="ok()">
+        <b-button @click="addItineraryToCart(ok)">
           Login
         </b-button>
       </template>
     </b-modal>
 
       <!-- BUY PACK MODAL -->
-    <b-modal id="login-modal" title="Login" centered>
+    <b-modal id="safd-modal" title="Login" centered>
      
       <template slot="modal-footer" slot-scope="{ ok }">
         <b-button @click="ok()">
@@ -103,7 +111,9 @@ import { Cities } from '../data/appData';
 
 let dummySearch = { 
   destination: 'Paris',
-  budget: 100
+  budget: 100,
+  adults: 3,
+  children: 1
 }
 
 let pickedAttractions = [];
@@ -128,7 +138,7 @@ export default {
   methods: {
     verifyLogged(property) {
       if (!this.$store.getters.isLogged) {
-        createToast(this.$bvToast, 'Please login to book an accomodation.', 'danger');
+        createToast(this.$bvToast, 'Please login to book an itinerary.', 'danger');
         return;
       }
 
@@ -165,8 +175,25 @@ export default {
     isPicked(attractionId) {
       return R.includes(attractionId, this.pickedAttractions);
     }, 
-    addItineraryToCart() {
+    actualPrice(base) {
+      return base * (this.searchData.adults + this.searchData.children * 0.5);
+    },
+    addItineraryToCart(ok) {
+      if (!this.$store.getters.isLogged) {
+        createToast(this.$bvToast, 'Please login to book an accomodation.', 'danger');
+        return;
+      }
 
+      this.$store.commit('addToCart', {
+        fixedName: this.searchData.destination + ' custom itinerary',
+        totalPrice: this.totalCost,
+        price: 'N/A',
+        ...this.searchData
+      });
+
+      createToast(this.$bvToast, 'Accomodation added to cart.', 'success');
+      this.$router.push('/');      
+      ok();
     }
   },
   computed: {
@@ -207,13 +234,20 @@ export default {
       return attractions;
     },
     totalCost() {
-      return R.reduce((a, attraction) => a + Attractions[attraction - 1].price, 0, this.pickedAttractions);
+      return R.reduce(
+        (a, attraction) => 
+          a + fixPrice(this.searchData, Attractions[attraction - 1].price)
+        , 0
+        , this.pickedAttractions);
     },
     overBudget() {
       return this.totalCost > this.searchData.budget
     }
   }
 }
+
+const fixPrice = (data, base) =>
+  base * (data.adults + data.children * 0.5)
 
 // HELPER 
 const createToast = (bv, text, type) => {
@@ -317,10 +351,14 @@ const createToast = (bv, text, type) => {
 .itineraryRightBtn {
   float: right;
   margin-right: 80px;
+  position: relative;
+  top: -40px;
 }
 
 .itineraryLeftBtn {
   float: left;
   margin-left: 80px;
+  position: relative;
+  top: -40px;
 }
 </style>

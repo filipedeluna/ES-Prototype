@@ -45,7 +45,7 @@
           :img-src="attraction.picture"
           img-top
           tag="article"
-          style="max-width: 12rem;"
+          style="max-width: 15rem;"
           class="searchpropertyrecommendationscard"
           v-for="attraction in randomAttractions"
           v-bind:key="attraction.id"
@@ -162,29 +162,23 @@ export default {
       
       let random;
 
-      for (let i = 0; i < 20; i++) {
-        random = Math.floor(Math.random() * Cities.length);
-
-        while (blacklistedCities.includes(random)) {
+      for (let i = 0; i < 10; i++) {
+        do
           random = Math.floor(Math.random() * Cities.length);
-        }
+        while (blacklistedCities.includes(random));
 
         blacklistedCities.push(random);
         pickedCities.push({ city: Cities[random] });
       }
 
-      for (let i = 0; i < 20; i++) {
-        random = Math.floor(Math.random() * Attractions.length);
-
-        while (blacklistedAttractions.includes(random)) {
+      for (let i = 0; i < 10; i++) {
+        do
           random = Math.floor(Math.random() * Attractions.length);
-        }
+        while (blacklistedAttractions.includes(random));
 
         blacklistedAttractions.push(random);
         pickedAttractions.push( { ...Attractions[random], ...pickedCities[random] });
       }
-
-
       return pickedAttractions;
     },
   }
@@ -219,7 +213,7 @@ const createToast = (bv, text, type) => {
 .searchpropertytitle2 {
   font-size: 30px;
   padding-left: 60px;
-  margin-top: 50px;
+  margin-top: 43px;
 }
 
 .searchpropertyrecommendations {

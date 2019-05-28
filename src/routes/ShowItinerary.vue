@@ -2,173 +2,81 @@
   <div class="showitinerary">
     <div class="mainBody">
       <div class="propertiestitle">
-        Showing {{ getFilteredProperties.length }} accomodations near {{ searchData.destination }}.
+        Choose what attractions  you wish to visit in {{ searchData.destination }}.
       </div>
-      <div class="propertyfilters">
-        <b-form-checkbox button class="propertyfilters2" v-model="filters.wifi" size="lg">Wifi</b-form-checkbox>
-        <b-form-checkbox button class="propertyfilters2" v-model="filters.pets" size="lg">Pets</b-form-checkbox>
-        <b-form-checkbox button class="propertyfilters2" v-model="filters.smokers" size="lg">Smokers</b-form-checkbox>
-        <b-form-checkbox button class="propertyfilters2" v-model="filters.cleaning" size="lg">Cleaning</b-form-checkbox>
-        <b-form-select class="propertyfilters2" size="lg" v-model="filters.order" :options="['Price ascending', 'Price descending']">
-          <option slot="first" :value="null">Sort results</option>  
-        </b-form-select>        
-        <b-form-select class="propertyfilters2" size="lg" v-model="filters.rooms" :options="['1+', '2+', '3+', '4+','5+']">
-          <option slot="first" :value="null">Number of rooms</option>  
-        </b-form-select>       
-        <b-form-select class="propertyfilters2" size="lg" v-model="filters.score" :options="['1+', '2+', '3+', '4+','5']">
-          <option slot="first" :value="null">Score</option>  
-        </b-form-select>  
-        <b-form-select class="propertyfilters2" size="lg" v-model="filters.distance" :options="['5km', '10km', '15km','+15km']">
-          <option slot="first" :value="null">Distance</option>  
-        </b-form-select>   
-      </div>
-      <div class="properties">
-        <div class="property" v-for="property in paginate(getFilteredProperties)" v-bind:key="property.id">
-          <div class="propertypic">
-              <b-img :src="property.picture" fluid rounded></b-img>
+      <div class="showItineraries">
+        <b-card
+          :img-src="attraction.picture"
+          img-top
+          tag="article"
+          style="max-width: 17rem;"
+          class="showItinerariesCard"
+          v-for="attraction in paginate(randomAttractions)"
+          v-bind:key="attraction.id"
+          @click="pickAttraction(attraction.id)"
+          v-bind:class="{ attractionPicked: isPicked(attraction.id) }"
+        >
+          <div v-if="isPicked(attraction.id)" class="itineraryPickedOverlay">
+            <b-img class="itineraryPickedOverlayImage" src="checkedImage.png"/>
           </div>
-          <div class="propertydata">
-            <div class="propertytitle">
-              {{ property.name }} in {{ searchData.destination }}
-            </div>
-              <ul class="propertylist">
-                <li class="propertylistitem">{{ property.distance }} km from {{ searchData.destination }} center.</li>
-                <li class="propertylistitem">Rooms: {{ property.rooms }}</li>
-                <li class="propertylistitem">Wi-fi Access: {{ getYesOrNo(property.wifi) }}</li>
-                <li class="propertylistitem">Pets Allowed: {{ getYesOrNo(property.pets) }}</li>
-                <li class="propertylistitem">Smokers Allowed: {{ getYesOrNo(property.smokers) }}</li>
-                <li class="propertylistitem">Cleaning Included: {{ getYesOrNo(property.cleaning) }}</li>
-                <li class="propertylistitem">Guests allowed: {{ getYesOrNo(property.guests) }}</li>
-                <li class="propertylistitem">Garage: {{ getYesOrNo(property.garage) }}</li>
-              </ul>
-          </div>
-         
-          <div style="float: right;"> 
-            <div class="material-icons propertyscore">
-              <div  v-for="index in property.score" v-bind:key="index+'a'">
-                <i class="material-icons propertystar">star</i>
-              </div>
-              <div  v-for="index in 5 - property.score" v-bind:key="index+'b'">
-                <i class="material-icons propertystar">star_border</i>
-              </div>
-              <div class="propertyreviewnumber">
-                Based on {{ property.reviews }} reviews.
-              </div>
-            </div>
-            <div class="propertybook">
-              <b-button @click="verifyLogged(property)" size="lg">Book now!</b-button>
-            </div>
-          </div>
-           <div class="propertyPrice">
-            {{ property.price }} €<span style="font-size: 20px;">/day</span>
-          </div>
-        </div>
 
-         <b-pagination
-          :total-rows="getFilteredProperties.length" 
-          v-model="currentPage"
-          :per-page="perPage"
+          <b-card-text class="showItinerariesCardText" >
+            {{ attraction.name }}
+            <br>
+            <div class="showItinerariesCardSore">
+              <div  v-for="index in attraction.score" v-bind:key="index+'a'">
+                  <i class="material-icons itinerariesstar">star</i>
+                </div>
+                <div  v-for="index in 5 - attraction.score" v-bind:key="index+'b'">
+                  <i class="material-icons itinerariesstar">star_border</i>
+              </div>
+              <br>
+            </div>
+          </b-card-text>
+        </b-card>
+      </div>
+
+      <b-pagination
+        :total-rows="randomAttractions.length" 
+        v-model="currentPage"
+        :per-page="perPage"
         />
+        <br>
+      <div class="propertiestitle">
+        ... or check out our discounted packs.
       </div>
     </div>
-    <!-- BOOK MODAL -->
-    <b-modal id="book-modal" title="Book Accomodation" centered>
-
-      <span class="bookModalTitle"> {{chosenProperty.name }} in {{ searchData.destination }}.</span>
-
-      <div class="modalpropertypic">
-        <b-img :src="chosenProperty.picture" fluid rounded></b-img>
-      </div>
-
-      <div class="bookModalPropertylist">
-        <span class="bookModalDetails">Accomodation details:</span>
-        <ul>
-          <li class="bookModalPropertylistItem">{{ chosenProperty.distance }} km from {{ searchData.destination }} center.</li>
-          <li class="bookModalPropertylistItem">{{ chosenProperty.rooms }} rooms.</li>
-          <li class="bookModalPropertylistItem" v-if="chosenProperty.wifi">Wi-fi access.</li>
-          <li class="bookModalPropertylistItem" v-if="chosenProperty.pets">Pets allowed.</li>
-          <li class="bookModalPropertylistItem" v-if="chosenProperty.smokers">Smokers allowed.</li>
-          <li class="bookModalPropertylistItem" v-if="chosenProperty.cleaning">Cleaning included.</li>
-          <li class="bookModalPropertylistItem" v-if="chosenProperty.guests">Guests allowed.</li>
-          <li class="bookModalPropertylistItem" v-if="chosenProperty.garage">Garage.</li>
-        </ul>
-      </div>
-
-      <div class="bookModalOrderlist">
-
-        <div class="material-icons propertyscore">
-          <div  v-for="index in chosenProperty.score" v-bind:key="index+'c'">
-            <i class="material-icons propertystar">star</i>
-          </div>
-          <div  v-for="index in 5 - chosenProperty.score" v-bind:key="index+'d'">
-            <i class="material-icons propertystar">star_border</i>
-          </div>
-          <div class="propertyreviewnumber">
-            Based on {{ chosenProperty.reviews }} reviews.
-          </div>
-        </div>
-
-        <span class="bookModalDetails">Order details:</span>
-        <ul>
-          <li class="bookModalOrderlistItem">Checkin date: {{ searchData.checkin.format('L') }}.</li>
-          <li class="bookModalOrderlistItem">Checkout date: {{ searchData.checkOut.format('L') }}.</li>
-          <li class="bookModalOrderlistItem">Number of adults: {{ searchData.adults }}.</li>
-          <li class="bookModalOrderlistItem">Number of children: {{ searchData.children }}.</li>
-          <li class="bookModalOrderlistItem">Total days: {{ searchData.checkOut.diff(searchData.checkin, 'days') + 1 }}.</li>
-        </ul>
-      </div>
-
-      <div class="bookModalTotal">
-        Total:
-        <br>
-        <span class="bookModalTotalPrice">{{ calculateTotalPrice(searchData.adults, searchData.children, chosenProperty.price, searchData.checkOut.diff(searchData.checkin, 'days') + 1) }} €</span>        
-      </div>
-
-      <template slot="modal-footer" slot-scope="{ ok }">
-        <b-button size="lg" @click="verifyProperty(ok, { 
-          ...chosenProperty, 
-          ...searchData,
-          fixedName: `${chosenProperty.name} in ${searchData.destination}`,
-          totalPrice: calculateTotalPrice(searchData.adults, searchData.children, chosenProperty.price, searchData.checkOut.diff(searchData.checkin, 'days') + 1) 
-        })">
-          Add to cart
-        </b-button>
-      </template>
-    </b-modal>
   </div>
 </template>
 
 <script>
 import * as R from 'ramda';
 
-let filters = {
-  wifi: false,
-  pets: false,
-  smokers: false,
-  cleaning: false,
-  order: null,
-  rooms: null,
-  score: null,
-  distance: null
+import { Attractions } from '../data/attractionData';
+import { Cities } from '../data/appData';
+
+let dummySearch = { 
+  destination: 'Paris',
+  budget: 9000
 }
+
+let pickedAttractions = [];
 
 export default {
   name: 'ShowItinerary',
   beforeMount(){
-    if (!this.$store.getters.wasPropertySearched)
-      this.$router.push('/');
+    //if (!this.$store.getters.wasPropertySearched)
+      //this.$router.push('/');
   },
   data() {
     return {
       currentPage: 1,
-      perPage: 5,
-      searchData: this.$store.getters.lastPropertySearched,
-      properties: this.$store.getters.generateProperties,
-      filteredProperties: this.$store.getters.generateProperties,
-      filters,
+      perPage: 8,
+      searchData: this.$store.getters.lastPropertySearched || dummySearch,
       chosenProperty: {
         score: 3
-      }
+      },
+      pickedAttractions
     }
   },
   methods: {
@@ -197,69 +105,60 @@ export default {
       
       return (costPerDay * adultsFix + costPerDay * 0.5 * childrenFix) * days;
     },
-    paginate(properties) {
-      return properties.slice(
+    paginate(attractions) {
+      return attractions.slice(
         (this.currentPage - 1) * this.perPage, 
         this.currentPage * this.perPage);
+    },
+    pickAttraction(attractionId) {
+      if (!R.includes(attractionId, this.pickedAttractions))
+        this.pickedAttractions.push(attractionId);
+      else
+        this.pickedAttractions = R.filter(id => id !== attractionId, this.pickedAttractions);
+    },
+    isPicked(attractionId) {
+      return R.includes(attractionId, this.pickedAttractions);
     }
   },
   computed: {
-    getFilteredProperties() {
-      let results = this.filteredProperties;
-
-      results = R.filter(property => 
-        (!this.filters.wifi     || property.wifi ===     this.filters.wifi)     &&
-        (!this.filters.pets     || property.pets ===     this.filters.pets)     &&
-        (!this.filters.smokers  || property.smokers ===  this.filters.smokers)  &&
-        (!this.filters.cleaning || property.cleaning === this.filters.cleaning) &&
-        checkRooms(this.filters.rooms, property.rooms) &&
-        checkScore(this.filters.score, property.score) &&
-        checkDistance(this.filters.distance, property.distance)
-      , this.properties);
-
-      if(this.filters.order != null) {
-        if (this.filters.order == 'Price ascending')
-          results = 
-            R.sort((a, b) => a.price - b.price, results);
-
-        if (this.filters.order == 'Price descending')
-          results = 
-            R.sort((a, b) => b.price - a.price, results);
-      }
-
-      return results;
-    },
     location() {
       return this.$route.params.location;
     },
     totalRows() {
       return this.filteredProperties.length;
     },
+    randomAttractions() {
+      let cities = [];
+      let blacklistedCities = [];
+
+      let attractions  = [];
+      let blacklistedAttractions = [];
+
+      let random;
+
+      for (let i = 0; i < 20; i++) {
+        do
+          random = Math.floor(Math.random() * Cities.length);
+        while (blacklistedCities.includes(random));
+
+        blacklistedCities.push(random);
+        cities.push({ city: Cities[random] });
+      }
+
+      for (let i = 0; i < 20; i++) {
+        do
+          random = Math.floor(Math.random() * Attractions.length);
+        while (blacklistedAttractions.includes(random));
+
+        blacklistedAttractions.push(random);
+        attractions.push( { ...Attractions[random], ...cities[random] });
+
+      }
+      
+      return attractions;
+    }
   }
 }
-
-const checkRooms = (formValue, propertyRooms) =>
-  formValue == '1+' && propertyRooms >= 1 ||
-  formValue == '2+' && propertyRooms >= 2 ||
-  formValue == '3+' && propertyRooms >= 3 ||
-  formValue == '4+' && propertyRooms >= 4 ||
-  formValue == '5+' && propertyRooms >= 5 ||
-  formValue == null;
-
-const checkScore = (formValue, propertyScore) =>
-  formValue == '1+' && propertyScore >= 1 ||
-  formValue == '2+' && propertyScore >= 2 ||
-  formValue == '3+' && propertyScore >= 3 ||
-  formValue == '4+' && propertyScore >= 4 ||
-  formValue == '5'  && propertyScore == 5 ||
-  formValue == null;
-
-const checkDistance = (formValue, propertyDistance) =>
-  formValue == '5km'  && propertyDistance <= 5  ||
-  formValue == '10km' && propertyDistance <= 10 ||
-  formValue == '15km' && propertyDistance <= 15 ||
-  formValue == '+15km' && propertyDistance > 15 ||
-  formValue == null;
 
 // HELPER 
 const createToast = (bv, text, type) => {
@@ -272,71 +171,64 @@ const createToast = (bv, text, type) => {
 </script>
 
 <style>
-.propertyfilters2 {
-  margin-right: 10px;
-  margin-left: 10px;
-}
-
-.propertyfilters {
+.showItineraries {
   display: flex;
-  margin-bottom: 10px;
+  flex-wrap: wrap;
+  margin-top: 30px;
+  width: 90%;
+  flex-direction: row;
+  align-items: center;
+  margin: auto;
+  justify-content: center;
 }
 
-.modalpropertypic {
-  width: 280px;
-  float: left;
+.showItinerariesCard {
+  margin-right: 15px;
+  margin-left: 15px;
+  margin-bottom: 30px;
 }
 
-.bookModalPropertylist {
-  float: left;
-  margin-left: 10px;
+.showItinerariesCardText {
+  text-align: center;
+  font-size: 18px;
 }
 
-#book-modal .modal-dialog {
-  max-width: 600px; 
+.itineraryPickedOverlay {
+  z-index: 1000;
+  width: 270px;
+  height: 270px;
+  background-color: #6c757da2;
+  position: absolute;
+  border-radius: 2px;
+  top: 0;
+  left: 0;
 }
 
-.bookModalDetails {
-  float: left;
-  font-size: 26px;
-  width: 100%;
+.itineraryPickedOverlayImage {
+  width: 150px;
+  margin-left: 60px;
+  margin-top: 60px;
 }
 
-.bookModalPropertylistItem {
-  margin-left: -10px;
-  line-height: 30px;
+.showItinerariesCardSore {
+  width: 60%;
+  margin: auto;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
 }
 
-.bookModalTitle {
-  float: left;
-  font-size: 26px;
-  width: 100%;
-  font-weight: 700;
-  margin-bottom: 15px;
+.itinerariesstar {
+  font-size: 8px;
+  color: rgb(236, 201, 0);
+  text-shadow:
+   -1px -1px 0 #000,  
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
 }
 
-.bookModalOrderlist {
-  float: left;
-}
-
-.bookModalOrderlistItem {
-  margin-left: -10px;
-  line-height: 30px;
-}
-
-.bookModalTotal {
-  font-size: 30px;
-  color: #007bff;
-  float: left;
-  line-height: 35px;
-  margin-right: 50px;
-  margin-top: 200px;
-}
-
-.bookModalTotalPrice {
-  font-size: 42px;
-  font-weight: 700;
-  color: #007bff;
-  margin-left: 10px;
-}
 </style>

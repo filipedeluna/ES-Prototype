@@ -138,7 +138,8 @@
   font-weight: 700;
   color: #007bff;
   float: right;
-  width: 180px;
+  width: 200px;
   height: 170px;
-  line-height: 200px;
+  line-height: 20px;
+  padding-top: 75px;
 }

@@ -59,8 +59,14 @@
               <b-button @click="verifyLogged(property)" size="lg">Book now!</b-button>
             </div>
           </div>
-           <div class="propertyPrice">
-            {{ property.price }} €<span style="font-size: 20px;">/day</span>
+
+          <div class="propertyPrice">
+            {{ actualPrice(property.price) }} €
+            <span style="font-size: 20px;">/day</span>
+            <br>
+            <span style="font-size: 20px; color: grey;">
+              {{ property.price }} € * {{ searchData.adults + searchData.children * 0.5 }}
+            </span>
           </div>
         </div>
 
@@ -201,7 +207,10 @@ export default {
       return properties.slice(
         (this.currentPage - 1) * this.perPage, 
         this.currentPage * this.perPage);
-    }
+    },
+    actualPrice(base) {
+      return base * (this.searchData.adults + this.searchData.children * 0.5);
+    },
   },
   computed: {
     getFilteredProperties() {

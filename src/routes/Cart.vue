@@ -124,15 +124,21 @@ export default {
       let cartFiltered = [];
 
       for (let i = 0; i < cart.length; i++) {
+        let fixEventName = cart[i].eventName ? cart[i].eventName + ", " + cart[i].fixedName : cart[i].fixedName;
+        let eventDays = cart[i].checkOut.diff(cart[i].checkin, 'days') + 1;
+        let fixEventPrice = cart[i].eventTicketPrice 
+          ? (Number(cart[i].eventTicketPrice) * eventDays) + Number(cart[i].totalPrice) 
+          : Number(cart[i].totalPrice);
+
         cartFiltered.push({
-          name: cart[i].fixedName,
+          name: fixEventName,
           adults: cart[i].adults,
           children: cart[i].children,
           checkIn: cart[i].checkin.format('L'),
           checkOut: cart[i].checkOut.format('L'),
-          days: cart[i].checkOut.diff(cart[i].checkin, 'days') + 1,
+          days: eventDays,
           pricePerNight: cart[i].price,
-          totalPrice: Number(cart[i].totalPrice),
+          totalPrice: fixEventPrice + ' €',
           remove: cart[i].cartId
         });
       }

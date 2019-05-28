@@ -17,7 +17,7 @@
                 <li>Location: {{ event.location }}</li>
                 <li>Date: {{ toMoment(event.date).format('L') }} to {{ toMoment(event.date).add(event.days, 'days').format('L') }} </li>
                 <li>Tickets Left: {{ event.tickets }}</li>
-                <li>Ticket Price: {{ event.price }}$</li>
+                <li>Ticket Price: {{ event.price }} €</li>
                 <li>Website: <a :href="event.site">{{ event.site }}</a></li>
               </ul>
           </div>
@@ -81,12 +81,17 @@ export default {
   },
   methods: {
     verifyEvent(event) {
-      if (event.tickets <= 0)
+      if (event.tickets <= 0 && event.tickets != '-') {
         createToast(this.$bvToast, 'Event is at full capacity.', 'danger');
+        return;
+      }
 
       const now = moment();
-      if (event.date <= now)
+
+      if (event.date <= now) {
         createToast(this.$bvToast, 'Event is not active anymore.', 'danger');
+        return;
+      }
 
       this.pickedEvent = event;
 
@@ -102,7 +107,9 @@ export default {
         checkOut: moment(this.pickedEvent.date).add(this.pickedEvent.days + 1, 'days'),
         destination: this.pickedEvent.location,
         children: fixedChildren,
-        adults: fixedAdults
+        adults: fixedAdults,
+        eventName: this.pickedEvent.name,
+        eventTicketPrice: this.pickedEvent.price * (fixedAdults + fixedChildren / 2)
       });
       
       this.$router.push('/showProperties');

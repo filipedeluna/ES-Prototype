@@ -106,14 +106,16 @@ export default {
 
       return totalPrice - discountPrice - this.pointsUsed;
     },
-    validatePayment(totalSpent) {
+    async validatePayment(totalSpent) {
       let pointsFixed = this.pointsUsed != null ? this.pointsUsed : 0;
       let totalFixed = totalSpent != null ? totalSpent : 0;
 
+      let message = `Successfully paid ${totalFixed} €. You won ${Math.floor(totalFixed / 10)} points with this purchase.`;
+      
+      createToast(this.$bvToast, message, 'success');
+      
       this.$store.commit('payCart', { pointsSpent: pointsFixed , totalSpent: totalFixed });
-
-      createToast(this.$bvToast, `Successfully paid ${totalFixed} €. You won ${Math.floor(totalFixed / 10)} points with this purchase.`, 'success');
-      this.$router.push('/showProperties');
+      this.$router.push('/');
     }
   },
   computed: {

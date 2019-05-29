@@ -51,7 +51,7 @@ const cartItemFields = [
   { key: 'checkOut', label: 'Check-out date', class: 'text-center' },
   { key: 'days', label: 'Nr. of days', class: 'text-center' },
   { key: 'pricePerNight', label: 'Price per night', class: 'text-center' },
-  { key: 'totalPrice', label: 'Total price', class: 'text-center' },
+  { key: 'totalPrice2', label: 'Total price', class: 'text-center' },
   { key: 'remove', label: 'Remove from cart', class: 'text-center' }
 ];
 
@@ -79,7 +79,7 @@ export default {
     removeCartItem(cartId) {
       this.$store.commit('removeFromCart', cartId);
 
-      createToast(this.$bvToast, 'Item removed from cart..', 'success');
+      createToast(this.$bvToast, 'Item removed from cart.', 'success');
     },
     validateDiscount() {
       if (this.discountCode != null) {
@@ -125,7 +125,7 @@ export default {
 
       for (let i = 0; i < cart.length; i++) {
         let fixEventName = cart[i].eventName ? cart[i].eventName + ", " + cart[i].fixedName : cart[i].fixedName;
-        let eventDays = cart[i].checkOut.diff(cart[i].checkin, 'days') + 1;
+        let eventDays = cart[i].checkOut.diff(cart[i].checkin, 'days') - 2;
         let fixEventPrice = cart[i].eventTicketPrice 
           ? (Number(cart[i].eventTicketPrice) * eventDays) + Number(cart[i].totalPrice) 
           : Number(cart[i].totalPrice);
@@ -138,15 +138,16 @@ export default {
           checkOut: cart[i].checkOut.format('L'),
           days: eventDays,
           pricePerNight: cart[i].price,
-          totalPrice: fixEventPrice + ' €',
-          remove: cart[i].cartId
+          totalPrice: fixEventPrice,
+          remove: cart[i].cartId,
+          totalPrice2: fixEventPrice + '€ '
         });
       }
 
       return cartFiltered;
     },
     cartDetails() {
-      let totalPrice = R.reduce((acc, cartItem) => acc + cartItem.totalPrice, 0, this.$store.getters.getCart);
+      let totalPrice = R.reduce((acc, cartItem) => acc + cartItem.totalPrice, 0, this.cartItems);
       let discountPrice = totalPrice * this.discount / 100;
       let finalPrice = totalPrice - discountPrice - this.pointsUsed;
 

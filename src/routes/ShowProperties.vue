@@ -190,7 +190,11 @@ export default {
     verifyProperty(ok, property) {
       this.$store.commit('addToCart', property);
 
-      this.$store.commit('addToast', { message: 'Accomodation added to cart.' , type: 'success' });
+      let message = this.searchData.eventName
+        ? 'Event tickets and accomodation added to cart.' 
+        : 'Accomodation added to cart.';
+
+      this.$store.commit('addToast', { message, type: 'success' });
 
       this.$router.push('/');      
       ok();

@@ -126,9 +126,8 @@ export default {
 
       for (let i = 0; i < cart.length; i++) {
         let fixEventName = cart[i].eventName ? cart[i].eventName + ", " + cart[i].fixedName : cart[i].fixedName;
-        let eventDays = cart[i].checkOut.diff(cart[i].checkin, 'days') - 2;
         let fixEventPrice = cart[i].eventTicketPrice 
-          ? (Number(cart[i].eventTicketPrice) * eventDays) + Number(cart[i].totalPrice) 
+          ? Number(cart[i].eventTicketPrice) + Number(cart[i].totalPrice) 
           : Number(cart[i].totalPrice);
 
         cartFiltered.push({
@@ -137,7 +136,7 @@ export default {
           children: cart[i].children,
           checkIn: cart[i].checkin.format('L'),
           checkOut: cart[i].checkOut.format('L'),
-          days: eventDays,
+          days: cart[i].checkOut.diff(cart[i].checkin, 'days') + 1,
           pricePerNight: cart[i].price,
           totalPrice: fixEventPrice,
           remove: cart[i].cartId,

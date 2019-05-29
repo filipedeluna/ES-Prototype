@@ -115,25 +115,10 @@
             </div>
           </div>
           <div class="premadeItineraryBuy">
-            <b-button @click="addPremadeItineraryToCart(pack)" v-if="applyDiscountOnPack(pack) > searchData.budget" block variant="danger" size="lg">Buy now</b-button>
-            <b-button @click="addPremadeItineraryToCart(pack)" v-if="applyDiscountOnPack(pack) <= searchData.budget" block variant="success" size="lg">Buy now</b-button>
+            <b-button @click="addPremadeItineraryToCart(pack)" v-if="applyDiscountOnPack(pack) > Number(searchData.budget)" block variant="danger" size="lg">Buy now</b-button>
+            <b-button @click="addPremadeItineraryToCart(pack)" v-if="applyDiscountOnPack(pack) <= Number(searchData.budget)" block variant="success" size="lg">Buy now</b-button>
           </div>
         </div>
-        
-        
-        
-          <!--
-          <b-card
-          :img-src="attraction.picture"
-          img-top
-          tag="article"
-          style="max-width: 8rem;"
-          class="showItinerariesCard"
-          v-for="attraction in paginate(randomAttractions)"
-          v-bind:key="attraction.id"
-          @click="pickAttraction(attraction.id)"
-          v-bind:class="{ attractionPicked: isPicked(attraction.id) }"
-        -->
       </div>
       <template slot="modal-footer" slot-scope="{ close }">
         <b-button @click="close()">
@@ -150,13 +135,6 @@ import * as R from 'ramda';
 import { Attractions } from '../data/attractionData';
 import { Cities } from '../data/appData';
 
-let dummySearch = { 
-  destination: 'Paris',
-  budget: 100,
-  adults: 3,
-  children: 1
-}
-
 let pickedAttractions = [];
 
 export default {
@@ -169,7 +147,7 @@ export default {
     return {
       currentPage: 1,
       perPage: 10,
-      searchData: this.$store.getters.lastPropertySearched || dummySearch,
+      searchData: this.$store.getters.lastPropertySearched,
       chosenProperty: {
         score: 3
       },
@@ -234,7 +212,8 @@ export default {
         ...this.searchData
       });
 
-      createToast(this.$bvToast, 'Itinerary added to cart.', 'success');
+      this.$store.commit('addToast', { message: 'Itinerary added to cart.' , type: 'success' });
+
       this.$router.push('/');      
       ok();
     },
@@ -250,12 +229,12 @@ export default {
         price: 'N/A',
         ...this.searchData
       });
+      this.$store.commit('addToast', { message: 'Itinerary added to cart.' , type: 'success' });
 
-      createToast(this.$bvToast, 'Itinerary added to cart.', 'success');
       this.$router.push('/');      
     }, 
     applyDiscountOnPack(pack) {
-      return (pack.price - pack.price * pack.discount / 100).toFixed(0)
+      return Number(pack.price - (pack.price * pack.discount / 100)).toFixed(0)
     }
   },
   computed: {

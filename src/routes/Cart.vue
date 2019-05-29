@@ -112,10 +112,11 @@ export default {
 
       let message = `Successfully paid ${totalFixed} €. You won ${Math.floor(totalFixed / 10)} points with this purchase.`;
       
-      createToast(this.$bvToast, message, 'success');
-      
       this.$store.commit('payCart', { pointsSpent: pointsFixed , totalSpent: totalFixed });
-      this.$router.push('/');
+
+      this.$store.commit('addToast', { message , type: 'success' });
+
+      this.$router.push('/');      
     }
   },
   computed: {

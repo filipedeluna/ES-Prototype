@@ -82,7 +82,7 @@ export default {
       }
       
       
-      createToast(this.$bvToast, 'You are now logged in.', 'success');
+      createToast(this.$bvToast, 'You are now registered. Please log in.', 'success');
       this.$store.commit('registerUser', registerForm);
       ok();
     },

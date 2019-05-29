@@ -190,7 +190,8 @@ export default {
     verifyProperty(ok, property) {
       this.$store.commit('addToCart', property);
 
-      createToast(this.$bvToast, 'Accomodation added to cart.', 'success');
+      this.$store.commit('addToast', { message: 'Accomodation added to cart.' , type: 'success' });
+
       this.$router.push('/');      
       ok();
     },

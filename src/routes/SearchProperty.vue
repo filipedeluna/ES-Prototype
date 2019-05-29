@@ -71,6 +71,15 @@ const formData = {
 
 export default {
   name: 'SearchProperty',
+    beforeMount() {
+    if (!this.$store.getters.wasPropertySearched)
+      this.$router.push('/');
+    if (this.$store.getters.hasToast) {
+      let toast = this.$store.getters.getToast;
+      console.log(toast.message);
+      createToast(this.$bvToast, toast.message, toast.type);
+    }
+  },
   data() {
     return {
       Cities,

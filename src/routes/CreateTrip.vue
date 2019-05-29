@@ -146,7 +146,7 @@ export default {
         checkOut: fixedCheckOutDate,
         children: fixedChildren,
         adults: fixedAdults,
-        budget: this.formData.budget
+        budget: formData.budget
       });
 
       this.$router.push('/showItinerary');

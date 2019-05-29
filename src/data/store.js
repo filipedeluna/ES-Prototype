@@ -14,7 +14,8 @@ export let Store = {
     userPropertiesCounter: 0,
     lastPropertySearch: null,
     cart: [],
-    cartCounter: 0
+    cartCounter: 0,
+    toast: null
   },
   mutations: { // sync
     // Session
@@ -71,7 +72,10 @@ export let Store = {
       });
 
       state.userPropertiesCounter++;
-    }
+    },
+    addToast: (state, payload) => {
+      state.toast = payload;
+    },
   },
   actions: { // async
 
@@ -121,6 +125,13 @@ export let Store = {
     },
     getCart: state =>
       state.cart,
+    hasToast: state =>
+      state.toast != null,
+    getToast: state => {
+      let toast = state.toast;
+      state.toast = null;
+      return toast;
+    }
   }
 }
 

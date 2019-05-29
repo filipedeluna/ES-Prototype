@@ -94,7 +94,7 @@ export default {
       this.formData.guests = this.formData.guests == true;
       this.formData.garage = this.formData.garage == true;
 
-      createToast(this.$bvToast, 'Property registered.', 'success');
+      this.$store.commit('addToast', { message: 'Property registered.' , type: 'success' });
 
       this.$store.commit('insertProperty', this.formData);
       
